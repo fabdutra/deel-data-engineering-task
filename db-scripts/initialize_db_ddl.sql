@@ -54,21 +54,6 @@ CREATE TABLE IF NOT EXISTS operations.order_items(
 
 alter table operations.order_items REPLICA IDENTITY FULL;
 
--- Create CDC User
-
-CREATE USER cdc_user REPLICATION LOGIN PASSWORD 'cdc_1234';
-
--- Create Replication Slot
-SELECT pg_create_logical_replication_slot('cdc_pgoutput', 'pgoutput');
-
--- Create Publication
-CREATE PUBLICATION cdc_publication FOR ALL TABLES;
-
--- Grant Permissions
-GRANT CONNECT ON DATABASE finance_db TO cdc_user;
-GRANT USAGE ON SCHEMA operations TO cdc_user;
-GRANT SELECT ON ALL TABLES IN SCHEMA operations TO cdc_user;
-
 CREATE OR REPLACE PROCEDURE update_customers(p_customers_to_update_or_insert INTEGER DEFAULT 1)
 LANGUAGE plpgsql AS $$
 DECLARE
