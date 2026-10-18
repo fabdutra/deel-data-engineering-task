@@ -1,0 +1,8 @@
+.git
+.env
+.venv
+context
+interview-guidance.md
+__pycache__
+artifacts
+.DS_Store

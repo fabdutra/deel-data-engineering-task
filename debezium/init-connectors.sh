@@ -1,36 +1,23 @@
 #!/bin/sh
-
-CONNECT_URL="http://kafka-connect:8083"
-CONNECTORS_DIR="/connectors"
-
-echo "Waiting for Kafka Connect to be ready..."
-until curl -s -o /dev/null -w "%{http_code}" "${CONNECT_URL}/connectors" | grep -q "200"; do
-  echo "Kafka Connect not ready yet, retrying in 5s..."
-  sleep 5
-done
-
-echo "Kafka Connect is ready. Registering connectors..."
-
-for CONNECTOR_FILE in "${CONNECTORS_DIR}"/*.json; do
-  CONNECTOR_NAME=$(basename "${CONNECTOR_FILE}" .json)
-  echo "Creating connector from ${CONNECTOR_NAME}..."
-
-  RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${CONNECT_URL}/connectors" \
-    -H "Content-Type: application/json" \
-    -d @"${CONNECTOR_FILE}")
-
-  HTTP_CODE=$(echo "${RESPONSE}" | tail -n1)
-  BODY=$(echo "${RESPONSE}" | sed '$d')
-
-  if [ "${HTTP_CODE}" = "201" ]; then
-    echo "Connector ${CONNECTOR_NAME} created successfully."
-  elif [ "${HTTP_CODE}" = "409" ]; then
-    echo "Connector ${CONNECTOR_NAME} already exists, skipping."
-  else
-    echo "Failed to create connector ${CONNECTOR_NAME} (HTTP ${HTTP_CODE}): ${BODY}"
+set -eu
+CONNECT_URL=http://kafka-connect:8083
+# Extract only the config object; the password stays an env-provider reference.
+sed -n '/"config": {/,$p' /connectors/finance-db-connector.json \
+  | sed '1s/.*"config": //' | sed '$d' >/tmp/config.json
+curl --fail-with-body --retry 20 --retry-connrefused --retry-delay 3 \
+  -sS -X PUT "$CONNECT_URL/connectors/finance-db-connector/config" \
+  -H 'Content-Type: application/json' --data-binary @/tmp/config.json >/dev/null
+for attempt in $(seq 1 60); do
+  status=$(curl -fsS "$CONNECT_URL/connectors/finance-db-connector/status")
+  if echo "$status" | grep -q '"state":"FAILED"'; then
+    echo 'Debezium connector failed; inspect kafka-connect logs.' >&2
+    exit 1
   fi
+  if [ "$(echo "$status" | grep -o '"state":"RUNNING"' | wc -l)" -ge 2 ]; then
+    echo 'Debezium connector and task are running.'
+    exit 0
+  fi
+  sleep 2
 done
-
-echo ""
-echo "All connectors processed. Current status:"
-curl -s "${CONNECT_URL}/connectors?expand=status"
+echo 'Timed out waiting for Debezium task.' >&2
+exit 1

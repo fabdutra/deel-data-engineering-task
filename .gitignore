@@ -1,1 +1,15 @@
-db-data/
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+spark-warehouse/
+metastore_db/
+derby.log
+artifacts/
+.coverage
+# Personal interview context is not part of the submitted solution.
+context/
+interview-guidance.md

@@ -1,68 +1,155 @@
+name: deel-assessment
+
+x-app: &app
+  image: deel-analytics:local
+  build:
+    context: .
+    dockerfile: docker/spark/Dockerfile
+  environment: &app-env
+    LAKE_ROOT: /lake
+    KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+    SPARK_MASTER: local[2]
+    SHUFFLE_PARTITIONS: ${SHUFFLE_PARTITIONS:-4}
+    TRIGGER_SECONDS: ${TRIGGER_SECONDS:-10}
+    MAX_OFFSETS_PER_TRIGGER: ${MAX_OFFSETS_PER_TRIGGER:-20000}
+    MAX_FILES_PER_TRIGGER: ${MAX_FILES_PER_TRIGGER:-32}
+    PYTHONPATH: /opt/deel
+  volumes:
+    - lake:/lake
+    - spark-events:/events
+  init: true
+
 services:
   transactions-db:
-    build:
-      context: ./docker/postgres-db
+    build: ./docker/postgres-db
     environment:
-      - POSTGRES_USER=finance_db_user
-      - POSTGRES_PASSWORD=1234
-      - POSTGRES_DB=finance_db
+      POSTGRES_USER: finance_db_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run python3 scripts/setup.py first}
+      POSTGRES_DB: finance_db
+      CDC_PASSWORD: ${CDC_PASSWORD:?Run python3 scripts/setup.py first}
     volumes:
-        - pg-data:/var/lib/postgresql/data
-        - "${PWD}/db-scripts/initialize_db_ddl.sql:/docker-entrypoint-initdb.d/initialize_db_ddl.sql"
-    ports:
-      - "5432:5432"
-    command: ["postgres", "-c", "wal_level=logical", "-c", "hot_standby=on"]
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.5.0
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
+      - pg-data:/var/lib/postgresql/data
+      - ./db-scripts/initialize_db_ddl.sql:/docker-entrypoint-initdb.d/10-source.sql:ro
+      - ./db-scripts/20-cdc.sh:/docker-entrypoint-initdb.d/20-cdc.sh:ro
+    command: [postgres, -c, wal_level=logical, -c, shared_preload_libraries=pg_cron, -c, cron.database_name=finance_db]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U finance_db_user -d finance_db']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    mem_limit: 512m
+    cpus: 1
 
   kafka:
-    image: confluentinc/cp-kafka:7.5.0
-    depends_on:
-      - zookeeper
+    image: apache/kafka:3.9.1
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_LISTENERS: PLAINTEXT://:29092,CONTROLLER://:29093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-    ports:
-      - "9092:9092"
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_NUM_PARTITIONS: 2
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_HEAP_OPTS: -Xms256m -Xmx512m
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: [CMD-SHELL, '/opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --list >/dev/null']
+      interval: 10s
+      timeout: 10s
+      retries: 30
+    mem_limit: 1g
+    cpus: 1
 
   kafka-connect:
-    image: debezium/connect:2.4
+    image: quay.io/debezium/connect:2.7.3.Final
     depends_on:
-      - kafka
-      - transactions-db
+      kafka: {condition: service_healthy}
+      transactions-db: {condition: service_healthy}
     environment:
       BOOTSTRAP_SERVERS: kafka:29092
-      GROUP_ID: 1
+      GROUP_ID: deel-connect
       CONFIG_STORAGE_TOPIC: debezium_connect_configs
       OFFSET_STORAGE_TOPIC: debezium_connect_offsets
       STATUS_STORAGE_TOPIC: debezium_connect_statuses
       CONFIG_STORAGE_REPLICATION_FACTOR: 1
       OFFSET_STORAGE_REPLICATION_FACTOR: 1
       STATUS_STORAGE_REPLICATION_FACTOR: 1
-    ports:
-      - "8083:8083"
+      HEAP_OPTS: -Xms256m -Xmx512m
+      CDC_PASSWORD: ${CDC_PASSWORD:?Run python3 scripts/setup.py first}
+      CONNECT_CONFIG_PROVIDERS: env
+      CONNECT_CONFIG_PROVIDERS_ENV_CLASS: org.apache.kafka.common.config.provider.EnvVarConfigProvider
+    healthcheck:
+      test: [CMD-SHELL, 'curl -fsS http://localhost:8083/connectors >/dev/null']
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    mem_limit: 1g
+    cpus: 1
 
   debezium-init:
-    image: curlimages/curl:latest
+    image: curlimages/curl:8.12.1
     depends_on:
-      - kafka-connect
+      kafka-connect: {condition: service_healthy}
     volumes:
-      - "${PWD}/debezium/init-connectors.sh:/init-connectors.sh"
-      - "${PWD}/debezium/connectors:/connectors"
-    entrypoint: ["/bin/sh", "/init-connectors.sh"]
-    restart: "no"
+      - ./debezium/init-connectors.sh:/init-connectors.sh:ro
+      - ./debezium/connectors:/connectors:ro
+    entrypoint: [/bin/sh, /init-connectors.sh]
+    restart: 'no'
+    mem_limit: 64m
+
+  pipeline:
+    <<: *app
+    command: [pipeline]
+    depends_on:
+      debezium-init: {condition: service_completed_successfully}
+    ports:
+      - '127.0.0.1:4040:4040'
+    mem_limit: 3g
+    cpus: 2
+    restart: unless-stopped
+
+  query:
+    <<: *app
+    profiles: [tools]
+    environment:
+      <<: *app-env
+      SPARK_MASTER: local[1]
+      SPARK_DRIVER_MEMORY: 768m
+    command: [metrics, all]
+    mem_limit: 1536m
+    cpus: 1
+
+  test:
+    <<: *app
+    profiles: [tools]
+    environment:
+      <<: *app-env
+      SPARK_MASTER: local[2]
+    command: [test]
+    mem_limit: 3g
+    cpus: 2
+
+  history:
+    <<: *app
+    profiles: [observability]
+    entrypoint: [/opt/spark/bin/spark-class, org.apache.spark.deploy.history.HistoryServer]
+    environment:
+      SPARK_HISTORY_OPTS: -Dspark.history.fs.logDirectory=/events
+    ports:
+      - '127.0.0.1:18080:18080'
+    mem_limit: 768m
 
 volumes:
   pg-data:
+  kafka-data:
+  lake:
+  spark-events:

@@ -5,7 +5,7 @@
     "database.hostname": "transactions-db",
     "database.port": "5432",
     "database.user": "cdc_user",
-    "database.password": "cdc_1234",
+    "database.password": "${env:CDC_PASSWORD}",
     "database.dbname": "finance_db",
     "topic.prefix": "finance_db",
     "schema.include.list": "operations",
@@ -13,12 +13,14 @@
     "slot.name": "cdc_pgoutput",
     "publication.name": "cdc_publication",
     "plugin.name": "pgoutput",
-    "publication.autocreate.mode": "all_tables",
+    "publication.autocreate.mode": "disabled",
     "slot.drop.on.stop": "false",
     "heartbeat.interval.ms": "10000",
     "key.converter": "org.apache.kafka.connect.json.JsonConverter",
     "key.converter.schemas.enable": "false",
     "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "value.converter.schemas.enable": "false"
+    "value.converter.schemas.enable": "false",
+    "snapshot.mode": "initial",
+    "decimal.handling.mode": "string"
   }
 }
