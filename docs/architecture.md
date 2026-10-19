@@ -1,20 +1,35 @@
 # Architecture and data contracts
 
 ```mermaid
-flowchart LR
-    P[(PostgreSQL\npg_cron synthetic source)] --> D[Debezium / Kafka Connect\nconsistent initial snapshot + CDC]
-    D --> K[(Kafka KRaft\n4 entity topics)]
-    K --> B[Spark Structured Streaming\nKafka → native Parquet sink]
-    B --> R[(Bronze\nimmutable Kafka envelopes)]
-    R --> M[Spark Structured Streaming\nforeachBatch]
-    M --> S[(Silver Delta\ncurrent entities + deletion guards)]
-    S --> G[(Gold Delta\nfacts + dimensions)]
-    G --> V[(Publication Delta\natomic version manifest)]
-    V --> C[Spark SQL CLI\n4 business metrics]
-    G --> C
-    M --> Q[(Quarantine Delta\ninvalid CDC blocks publication)]
-    B --> O[Progress JSON / Spark event logs]
-    M --> O
+flowchart TB
+    ENV["Local .env / Connect env provider"] --> P
+    ENV --> D
+    INIT["debezium-init: one-off connector setup"] --> D
+    P[("PostgreSQL / pg_cron source")] --> D["Kafka Connect / Debezium: snapshot + WAL CDC"]
+    D --> K[("Kafka KRaft: four entity topics")]
+
+    subgraph APP["One local Spark application: two shared task slots"]
+        B["Stream 1: Kafka to native Parquet sink"]
+        M["Stream 2: Bronze readStream / foreachBatch"]
+    end
+
+    K --> B --> R[("Bronze Parquet: original envelopes")]
+    R --> M
+    M --> S[("Silver Delta: accumulated current state")]
+    S -->|"Historical-state joins inside foreachBatch"| M
+    M --> G[("Gold Delta: order/item facts and dimensions")]
+    G --> V[("Publication Delta: completed table versions")]
+    V --> C["Separate Spark SQL CLI container"]
+    G -->|"Read at published versions"| C
+    M --> Q[("Quarantine Delta: invalid CDC")]
+    B -.-> CB[("Persistent Bronze checkpoint")]
+    M -.-> CM[("Persistent materialization checkpoint")]
+    B -.-> PR[("Streaming progress JSON")]
+    M -.-> PR
+    B -.-> EL[("Spark event-log volume")]
+    M -.-> EL
+    EL --> H["Optional History Server: localhost:18080"]
+    APP -.-> UI["Live Spark UI: localhost:4040"]
 ```
 
 There are two independent streaming checkpoints. Kafka ingestion can continue while materialization catches up. In the small local deployment both queries share one Spark application; an unrecoverable query failure stops that application and Compose restarts it. Kafka and Bronze absorb the backlog. One materializer owns Silver/Gold/publication; multiple concurrent writers are not supported by this application.
@@ -41,6 +56,22 @@ erDiagram
 ```
 
 The fact-to-fact relationship documents lineage; the order-count queries intentionally query only the order fact. Order items carry the current parent's status/date/customer for direct operational filtering. An order change recomputes its affected items from Silver. An item change recomputes that item; unrelated facts are not rewritten. Dimensions use SCD1 and stable source IDs rather than an additional surrogate-key allocation service.
+
+## Joining CDC with historical data
+
+Here, historical data means the rows present in the initial Debezium snapshot plus the current state accumulated from earlier microbatches. Those rows are persisted in Silver Delta and remain available even when their keys have no event in the current batch. It does not mean a point-in-time lookup of every past status or attribute version.
+
+`materialize_batch()` first applies CDC to Silver. Then `refresh_gold()` opens the accumulated Silver `orders` and `order_items` tables for the current batch and performs these joins:
+
+| Trigger | Historical lookup | Result |
+|---|---|---|
+| A new or changed item | Join the affected Silver item to the stored order on `order_id` in `item_fact()` | The item inherits the order's current status, customer and delivery date, even if the order has no event in this batch |
+| A changed order | Semi-join stored Silver items to changed order IDs, then join those items to stored orders | Previously ingested items reflect the parent's new state without requiring another item event |
+| A current order-count query | Query the accumulated order fact, with date/customer dimension joins where needed | Counts include both preexisting and newly created orders |
+
+These are batch DataFrame joins inside Structured Streaming's `foreachBatch`, with the persisted state refreshed each batch. A stream-stream window join is not required for this enrichment and could evict old orders that must remain queryable.
+
+The integration test explicitly loads an order through a snapshot event, processes several later batches, and then sends a new item for that unchanged order alongside a newly created order. It verifies the new item's inherited attributes and metrics combining old and new records. The existing parent-status-change scenario also verifies that historical item rows are refreshed without new events for each child.
 
 ## Consistency boundary
 

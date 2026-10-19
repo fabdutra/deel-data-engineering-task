@@ -40,7 +40,7 @@ A metrics command never creates infrastructure. `docker compose up` starts the f
 - Top-three results return up to three rows, with date/ID as a deterministic tiebreaker.
 - History means **all preexisting orders plus ongoing current state**, with CDC events retained for replay/audit. This is not an SCD2 or historical state-transition reporting product. No history preceding the initial Debezium snapshot can be reconstructed.
 
-The four query definitions are in [sql/](sql/). See the [architecture and consistency contract](docs/architecture.md) and [cluster sizing and performance strategy](docs/performance.md).
+The four query definitions are in [sql/](sql/). See the [deliverable-by-deliverable review](docs/assessment-deliverables.md), [architecture and historical-data joins](docs/architecture.md), and [cluster sizing and performance strategy](docs/performance.md).
 
 ## Correctness and recovery
 

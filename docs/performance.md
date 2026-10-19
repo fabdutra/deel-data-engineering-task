@@ -17,6 +17,42 @@ The baseline stays comfortably below the VM's RAM; memory caps are limits, not r
 
 Triggers default to 10 seconds, Kafka ingestion to at most 20,000 offsets per trigger and file ingestion to 32 files per trigger. Those bound intake, not total memory: one file may contain many rows, and a single parent update may affect many children. Increasing `maxOffsetsPerTrigger` trades backlog reduction for batch duration and pressure on downstream MERGE. `maxRecordsPerFile=1000000` is an upper bound and does not eliminate small files.
 
+These are engineering starting choices exercised by the recorded workload, not the result of an exhaustive A/B tuning study. No measured optimum is claimed. The 1 GiB gap between the pipeline's 2 GiB heap and 3 GiB container cap is a local process budget, not an explicit distributed `spark.executor.memoryOverhead` setting.
+
+| Setting | Decision and tradeoff |
+|---|---|
+| `local[2]` and 2-CPU container quota | Two task slots shared by both queries; leaves resources for the source and CDC. This does not create two distributed executors |
+| Four shuffle partitions | A small initial task count for the local parallelism; revisit task sizes/counts as data or available cores increase |
+| Delta `snapshotPartitions=2` | Small local parallelism for reconstructing Delta log state; reconsider when metadata grows |
+| Ten-second triggers | Balance update frequency against job/commit overhead and small-file creation |
+| 20,000 Kafka offsets per trigger | Bound intake across the subscribed partitions; does not guarantee throughput or bound downstream fanout |
+| 32 Bronze files per trigger | Bound the file backlog admitted per batch; file sizes and row counts still matter |
+| Persist only the current batch and decoded changes | Reuse inputs for validation/MERGE, then release them in `finally`; avoids caching the whole historical lake |
+| AQE configured on the session | Inspect the effective executed plan: streaming plans disable AQE, so a global `true` alone is not proof that every `foreachBatch` join uses it |
+| No physical table partitioning in the demo | Avoid excessive tiny partitions; large-table file layout must be selected from real access/update patterns |
+
+The observed environment and benchmark sizes are known; production arrival rate, event-size distribution, update/delete mix, hot-key fanout, query concurrency, remote storage throughput and a numeric freshness SLA were not supplied. Those unknowns prevent a defensible fixed production executor count.
+
+## Measured results and what they support
+
+| Measurement | Recorded result | Interpretation |
+|---|---:|---|
+| Initial materialization | 600,200 events in 43.764 s | About 13,714 input events/s for this synthetic materialization phase, excluding separate initialization/Bronze write time |
+| Update phase | 10,000 order updates in 13.111 s | Includes propagation to their 50,000 associated item facts in the fixture |
+| Task attempts / failed attempts | 585 / 0 | Across the complete benchmark application |
+| Summed executor CPU / run time | 46.869 s / 65.956 s | Totals across initialization, load, update and checks; concurrent tasks make these different from wall time |
+| Task GC time, summed | 3.170 s | Per-task accounting can overlap; not a process-wide GC percentage |
+| Memory spill / disk spill | 0 / 0 bytes | No task spill was recorded; peak process memory and all disk usage were not measured by these counters |
+| Shuffle read / written | Approximately 66.1 MB each | Redistributed data across the application's stages |
+| Task run time p50 / p95 / maximum | 19 / 517 / 4,884 ms | Inspect comparable tasks within a stage before attributing the tail to skew |
+| Kafka-to-Bronze batch p50 / p95 / maximum | 2.735 / 3.158 / 3.805 s, 9 nonempty batches | Small native streaming-progress sample |
+| Bronze-to-Gold batch p50 / p95 / maximum | 14.071 / 19.347 / 29.825 s, 5 nonempty batches | Includes startup/catch-up; some batches exceeded the ten-second trigger |
+| Restart-followed-by-update visibility | 46.561 s upper bound | Includes pipeline restart, CLI cold starts and polling; not a steady-state p95 |
+
+Sources: [benchmark](evidence/benchmark-100k-orders.json), [Spark tasks](evidence/benchmark-spark-tasks.json), [streaming progress](evidence/streaming-progress-summary.jsonl) and [live reconciliation](evidence/live-reconciliation.json). The progress helper selects a lower order statistic without interpolation, so its p95 on these tiny samples is an approximate sample summary, not an SLA estimate. Task input-byte totals include repeated reads and must not be interpreted as unique lake bytes or physical network traffic.
+
+These observations support feasibility for the exercised local workload. They do not establish sustained production capacity, a minimum viable heap, a millions-of-orders target-table profile, or an optimal partition count. The slower materialization batches motivate a sustained backlog/freshness test before promising an SLA.
+
 ## How to size a production cluster
 
 Record input rate λ (events/s), burst multiplier, average/p95 event bytes, retained table bytes and file count, changed entity distribution, children per parent (including hot keys), source snapshot size, per-stage CPU time, shuffle/spill, storage throughput and the freshness objective. Total historical row count alone does not determine the cluster.
