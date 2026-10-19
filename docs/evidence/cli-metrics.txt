@@ -38,4 +38,3 @@ top-customers
 |36         |Blue Sky LLC    |2             |
 |38         |Cars Company    |2             |
 +-----------+----------------+--------------+
-

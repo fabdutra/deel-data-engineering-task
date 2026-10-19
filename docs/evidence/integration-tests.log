@@ -11,8 +11,8 @@
 26/10/19 00:09:02 INFO ResourceProfileManager: Added ResourceProfile id: 0
 26/10/19 00:09:02 INFO SecurityManager: Changing view acls to: spark
 26/10/19 00:09:02 INFO SecurityManager: Changing modify acls to: spark
-26/10/19 00:09:02 INFO SecurityManager: Changing view acls groups to: 
-26/10/19 00:09:02 INFO SecurityManager: Changing modify acls groups to: 
+26/10/19 00:09:02 INFO SecurityManager: Changing view acls groups to:
+26/10/19 00:09:02 INFO SecurityManager: Changing modify acls groups to:
 26/10/19 00:09:02 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: spark; groups with view permissions: EMPTY; users with modify permissions: spark; groups with modify permissions: EMPTY
 26/10/19 00:09:02 INFO Utils: Successfully started service 'sparkDriver' on port 35365.
 26/10/19 00:09:02 INFO SparkEnv: Registering MapOutputTracker
