@@ -1,0 +1,60 @@
+26/10/19 11:05:10 INFO SparkContext: Running Spark version 3.5.8
+26/10/19 11:05:10 INFO SparkContext: OS info Linux, 6.12.54-linuxkit, aarch64
+26/10/19 11:05:10 INFO SparkContext: Java version 11.0.29
+26/10/19 11:05:10 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/10/19 11:05:10 INFO ResourceUtils: ==============================================================
+26/10/19 11:05:10 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/10/19 11:05:10 INFO ResourceUtils: ==============================================================
+26/10/19 11:05:10 INFO SparkContext: Submitted application: acme-test
+26/10/19 11:05:10 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 1024, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/10/19 11:05:10 INFO ResourceProfile: Limiting resource is cpu
+26/10/19 11:05:10 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/10/19 11:05:10 INFO SecurityManager: Changing view acls to: spark
+26/10/19 11:05:10 INFO SecurityManager: Changing modify acls to: spark
+26/10/19 11:05:10 INFO SecurityManager: Changing view acls groups to:
+26/10/19 11:05:10 INFO SecurityManager: Changing modify acls groups to:
+26/10/19 11:05:10 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users with view permissions: spark; groups with view permissions: EMPTY; users with modify permissions: spark; groups with modify permissions: EMPTY
+26/10/19 11:05:10 INFO Utils: Successfully started service 'sparkDriver' on port 43397.
+26/10/19 11:05:10 INFO SparkEnv: Registering MapOutputTracker
+26/10/19 11:05:10 INFO SparkEnv: Registering BlockManagerMaster
+26/10/19 11:05:10 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/10/19 11:05:10 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/10/19 11:05:10 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/10/19 11:05:10 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-790d80f3-50f7-4036-b4d5-23afd6c778ae
+26/10/19 11:05:10 INFO MemoryStore: MemoryStore started with capacity 1048.8 MiB
+26/10/19 11:05:10 INFO SparkEnv: Registering OutputCommitCoordinator
+26/10/19 11:05:11 INFO JettyUtils: Start Jetty 0.0.0.0:4040 for SparkUI
+26/10/19 11:05:11 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/10/19 11:05:11 INFO Executor: Starting executor ID driver on host c1b8c2a33867
+26/10/19 11:05:11 INFO Executor: OS info Linux, 6.12.54-linuxkit, aarch64
+26/10/19 11:05:11 INFO Executor: Java version 11.0.29
+26/10/19 11:05:11 INFO Executor: Starting executor with user classpath (userClassPathFirst = false): ''
+26/10/19 11:05:11 INFO Executor: Created or updated repl class loader org.apache.spark.util.MutableURLClassLoader@1ecc49e7 for default.
+26/10/19 11:05:11 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 36223.
+26/10/19 11:05:11 INFO NettyBlockTransferService: Server created on c1b8c2a33867:36223
+26/10/19 11:05:11 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/10/19 11:05:11 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, c1b8c2a33867, 36223, None)
+26/10/19 11:05:11 INFO BlockManagerMasterEndpoint: Registering block manager c1b8c2a33867:36223 with 1048.8 MiB RAM, BlockManagerId(driver, c1b8c2a33867, 36223, None)
+26/10/19 11:05:11 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, c1b8c2a33867, 36223, None)
+26/10/19 11:05:11 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, c1b8c2a33867, 36223, None)
+26/10/19 11:05:11 INFO SingleEventLogFileWriter: Logging events to file:/events/local-1792407911066.inprogress
+test_cdc_metrics_recovery_deletes_and_late_parents (test_pipeline.StreamingCorrectnessTest) ... 26/10/19 11:05:17 WARN SparkStringUtils: Truncated the string representation of a plan since it was too large. This behavior can be adjusted by setting 'spark.sql.debug.maxToStringFields'.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by org.apache.spark.util.SizeEstimator$ (file:/opt/spark/jars/spark-core_2.12-3.5.8.jar) to field java.math.BigDecimal.intVal
+WARNING: Please consider reporting this to the maintainers of org.apache.spark.util.SizeEstimator$
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+2026-10-19 11:05:37,828 INFO app.materialize published batch=0 events=14 duration_ms=18370 versions={'dim_customer': 1, 'dim_product': 1, 'dim_date': 2, 'fact_order': 1, 'fact_order_item': 1}
+2026-10-19 11:05:55,244 INFO app.materialize published batch=1 events=6 duration_ms=7179 versions={'dim_customer': 1, 'dim_product': 1, 'dim_date': 4, 'fact_order': 3, 'fact_order_item': 3}
+2026-10-19 11:06:02,669 INFO app.materialize published batch=2 events=2 duration_ms=6256 versions={'dim_customer': 1, 'dim_product': 1, 'dim_date': 5, 'fact_order': 4, 'fact_order_item': 4}
+2026-10-19 11:06:09,497 INFO app.materialize published batch=3 events=2 duration_ms=6308 versions={'dim_customer': 1, 'dim_product': 1, 'dim_date': 6, 'fact_order': 5, 'fact_order_item': 5}
+2026-10-19 11:06:14,164 INFO app.materialize published batch=4 events=1 duration_ms=4100 versions={'dim_customer': 1, 'dim_product': 1, 'dim_date': 6, 'fact_order': 5, 'fact_order_item': 6}
+2026-10-19 11:06:20,303 INFO app.materialize published batch=5 events=1 duration_ms=5426 versions={'dim_customer': 1, 'dim_product': 1, 'dim_date': 7, 'fact_order': 6, 'fact_order_item': 7}
+2026-10-19 11:06:25,310 INFO app.materialize published batch=6 events=1 duration_ms=3439 versions={'dim_customer': 1, 'dim_product': 1, 'dim_date': 7, 'fact_order': 6, 'fact_order_item': 7}
+2026-10-19 11:06:36,578 INFO app.materialize published batch=7 events=3 duration_ms=9831 versions={'dim_customer': 1, 'dim_product': 1, 'dim_date': 8, 'fact_order': 7, 'fact_order_item': 8}
+ok
+
+----------------------------------------------------------------------
+Ran 1 test in 89.067s
+
+OK
