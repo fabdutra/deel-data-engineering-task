@@ -1,0 +1,20 @@
+{
+  "kind": "synthetic_materialization_not_kafka_end_to_end",
+  "timestamp_utc": "2026-10-19T00:14:13.648963+00:00",
+  "spark_version": "3.5.8",
+  "master": "local[2]",
+  "shuffle_partitions": 4,
+  "orders": 100000,
+  "items_per_order": 5,
+  "initial_events": 600200,
+  "initialization_seconds": 8.392,
+  "bronze_write_seconds": 1.567,
+  "initial_materialization_seconds": 43.764,
+  "initial_events_per_second": 13714.42,
+  "order_updates": 10000,
+  "update_materialization_seconds": 13.111,
+  "parquet_files_including_bronze_and_old_versions": 52,
+  "parquet_bytes_including_bronze_and_old_versions": 35249612,
+  "correctness": "passed",
+  "lake_root": "/lake/benchmarks/run-8httfoeu"
+}

@@ -1,0 +1,69 @@
+# Spark sizing, performance and scale strategy
+
+## Local sizing and objective
+
+The implementation runs on an ARM64 development machine whose Docker VM has approximately 8 GB RAM and 10 available logical CPUs. The local Spark application uses `local[2]`: the driver and tasks share one JVM with two task slots, a 2 GiB heap and a 3 GiB container limit. This is explicitly a development sizing choice, not a production executor layout. Four shuffle partitions keep small joins/windows/merges parallel without the default 200-task overhead. Both streams share those slots.
+
+| Service | Container memory cap | CPU cap | Reason |
+|---|---:|---:|---|
+| Spark pipeline | 3 GiB | 2 | 2 GiB heap plus Python, native and JVM overhead |
+| PostgreSQL | 512 MiB | 1 | Small provided synthetic source |
+| Kafka | 1 GiB | 1 | 512 MiB heap plus buffers/page cache |
+| Kafka Connect | 1 GiB | 1 | 512 MiB heap plus connector overhead |
+| One-off CLI | 1.5 GiB | 1 | 768 MiB heap; only allocated during a query |
+| Test/benchmark | 3 GiB | 2 | Run separately for representative measurements |
+
+The baseline stays comfortably below the VM's RAM; memory caps are limits, not reservations. Do not run history, load tests and extra query containers together on an 8 GB VM. Startup batches/backfills are measured separately from warm batches. The near-real-time objective is a healthy pipeline that keeps up with arrivals and makes changes queryable within tens of seconds; this is an objective to validate, not an asserted production SLA.
+
+Triggers default to 10 seconds, Kafka ingestion to at most 20,000 offsets per trigger and file ingestion to 32 files per trigger. Those bound intake, not total memory: one file may contain many rows, and a single parent update may affect many children. Increasing `maxOffsetsPerTrigger` trades backlog reduction for batch duration and pressure on downstream MERGE. `maxRecordsPerFile=1000000` is an upper bound and does not eliminate small files.
+
+## How to size a production cluster
+
+Record input rate λ (events/s), burst multiplier, average/p95 event bytes, retained table bytes and file count, changed entity distribution, children per parent (including hot keys), source snapshot size, per-stage CPU time, shuffle/spill, storage throughput and the freshness objective. Total historical row count alone does not determine the cluster.
+
+1. Benchmark representative inserts, updates, deletes and skew against the target table size. Measure ingestion and materialization independently; replay/backfill can have a different workload mix. Find sustainable processing rate at the target batch duration, rather than extrapolating a tiny file benchmark.
+2. Let `T` be the trigger interval. A first batch-input estimate is `λ × T`; include burst/catch-up capacity. A useful initial capacity margin is 30–50%, verified under load. For backlog `B` and desired recovery time `R`, required throughput is at least `λ + B/R`.
+3. Estimate task CPU seconds/event from Spark event logs. Required cores are approximately `peak events/s × measured CPU seconds/event / target utilization`. This excludes I/O waits and fixed table-maintenance costs, so validate the result with batch-duration measurements. Task counts/shuffle partitions must expose enough parallelism for those cores.
+4. Start a production benchmark with moderate executors (for example 4 cores, 8–16 GiB heap each, and explicitly budgeted Python/native/memory overhead). This is a benchmark starting point, not a measured requirement. Size the driver separately for plans, file metadata and concurrent queries. Choose executor count from measured throughput and then rerun the representative load.
+5. Scale out when useful tasks queue and resources are saturated; scale memory or reduce task input when spill/GC is the constraint. Add Kafka partitions for an ingestion partition bottleneck, not as a universal Spark tuning measure. Changing partition counts requires preserving per-key CDC ordering. Additional cores will not fix an oversized single-key fanout, storage latency or excessive file listing.
+
+Spark memory should cover active task working sets and any intentional cached microbatch, with headroom. The application persists only the bounded input batch and decoded changes, then unpersists in `finally`; it does not cache the entire historical lake. Data transformations and candidate joins remain distributed, without collecting business datasets to the driver. There is no unbounded stream-stream join state.
+
+## Diagnosis and scaling actions
+
+| Evidence | Likely constraint | Action to validate |
+|---|---|---|
+| Batch duration consistently exceeds trigger; lag grows | Processing cannot keep up | Identify expensive stage first; then add capacity or reduce work |
+| High executor CPU and queued balanced tasks | Insufficient compute | Add executors/cores and enough task parallelism |
+| Long-tail tasks / hot order IDs | Skew or parent fanout | Inspect key distribution; isolate/split hot workloads; avoid blindly broadcasting |
+| High GC / memory spill | Too-large task working sets | Smaller input/tasks, more memory, narrower data and measured caching |
+| High shuffle read/write | Join/window cost | Inspect plans and partition counts; broadcast only verified small dimensions |
+| Large target scans per MERGE | Target layout/file skipping | Compact and cluster/Z-order on relevant keys; benchmark before/after |
+| Many tiny files / driver planning time | Frequent small appends/merges | Adjust cadence/write parallelism; schedule maintenance |
+| Kafka lag despite idle Spark | Source partition or broker bottleneck | Inspect broker I/O, partitions and consumer stages |
+| Source replication-slot WAL growth | CDC/storage outage | Restore connector or capacity; monitor slot LSN and WAL retention |
+| Fresh Gold but slow CLI | Query cold start or scans | Separate query latency from data freshness; consider an always-on serving engine |
+
+The current incremental algorithm limits business recomputation to changed entities, but **does not guarantee constant-time lookup** in large Delta targets. Semi-joins/MERGE can scan many files. At large scale, measure those scans and use appropriate file layout, compaction, key locality and storage throughput. Do not claim that incremental source intake alone makes target lookup cheap. An order-item index/materialized access path may be justified if parent updates dominate; its consistency cost must be included.
+
+For a large workload, start with target Parquet files in the approximate 128–256 MiB range and tune from observed task/read behavior. Avoid a global `coalesce(1)` bottleneck. Small dimensions may remain unpartitioned and be broadcast if their measured size is safe. Larger tables may use coarse partitions when their size and access patterns justify pruning; mutable date fields and high-cardinality IDs require care. Delta `OPTIMIZE`/Z-order can improve locality, but needs a benchmark and scheduled single-writer coordination. Raw Bronze files must not be rewritten underneath the active Parquet file-source checkpoint.
+
+## Evidence and monitoring
+
+The application persists native `StreamingQueryProgress` JSON and Spark event logs. Inspect `numInputRows`, input/processed rows per second, batch durations, Kafka start/end/latest offsets, outstanding offsets, task times, executor CPU/GC, shuffle, memory/disk spill, files scanned and Delta MERGE metrics (`DESCRIBE HISTORY`). Record end-to-end source-change visibility independently from task throughput.
+
+`foreachBatch` performs several actions over cached data. Spark's reported input rows/rates can be inflated by repeated scans, especially MERGE; `publication.input_events` records the actual raw batch count. Do not interpret reported processedRowsPerSecond as unique-event throughput without checking that distinction.
+
+```sh
+# Synthetic run, isolated under /lake/benchmarks/run-*:
+docker compose run --rm --no-deps test benchmark --orders 10000 --items-per-order 5
+# Actual source reconciliation and a restart-followed-by-update:
+python3 scripts/verify_live.py
+# Copy native progress for offline inspection:
+docker compose cp pipeline:/lake/observability/progress ./artifacts/progress
+python3 scripts/progress_report.py ./artifacts/progress
+```
+
+The benchmark reports fixture volume, execution settings, Bronze write time, materialization time, update time and correctness. It is not Kafka throughput or a production capacity claim. The live test reports an upper bound on change visibility including pipeline restart, CLI cold starts and polling; this is not steady-state p95 latency. Actual results are retained in [evidence](evidence/).
+
+Alert on sustained freshness/batch-duration breaches, growing Kafka or Bronze lag, query exceptions, quarantine rows, source WAL retention, disk usage and small-file growth. Persist logs centrally in production. Retention/compaction must preserve at least the active publication's versions, the longest reader and the maximum recovery window; automatic VACUUM is intentionally absent from this demo.
