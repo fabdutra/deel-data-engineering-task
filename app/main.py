@@ -22,7 +22,8 @@ def main():
     args = parser.parse_args()
     if args.command == "metrics" and args.limit < 1:
         parser.error("--limit must be positive")
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s", force=True, stream=sys.stderr)
+    logging.getLogger("py4j").setLevel(logging.WARNING)
     settings = Settings()
     spark = session(settings, f"acme-{args.command}")
     try:
