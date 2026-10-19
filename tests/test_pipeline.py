@@ -103,10 +103,29 @@ class StreamingCorrectnessTest(unittest.TestCase):
         now = dt.datetime.now(dt.timezone.utc)
         self.batch([(b'{"order_id":102}', None, "finance_db.operations.orders", 0, 999, now, now)], 6)
         self.assertEqual(sum(r["open_orders"] for r in self.rows("open-orders")), 3)
+        # A new item must join an unchanged order from the initial snapshot,
+        # even though that order has no event in this microbatch. Include a new
+        # order as well: metrics must combine preexisting and newly created data.
+        history_order = read_delta(self.spark, self.settings.path("silver/orders")).filter("order_id = 103").first()
+        self.assertEqual(history_order["_lsn"], 1)
+        self.batch([
+            self.event("order_items", self.item(3000, 103, product=20, quantity=13), lsn=7),
+            self.event("orders", self.order(10000, customer=1, date=20013), lsn=7),
+            self.event("order_items", self.item(3001, 10000, quantity=2), lsn=7),
+        ], 7)
+        self.assertEqual(self.rows("pending-items"), [
+            dict(product_id=10, pending_item_lines=2, pending_units=13),
+            dict(product_id=20, pending_item_lines=1, pending_units=13),
+        ])
+        historical_join = read_delta(self.spark, self.settings.path("gold/fact_order_item")).filter("order_item_id = 3000").first()
+        self.assertEqual((historical_join["order_id"], historical_join["status"], historical_join["customer_key"]),
+                         (103, "REPROCESSING", 3))
+        self.assertEqual(sum(r["open_orders"] for r in self.rows("open-orders")), 4)
+        self.assertEqual(read_delta(self.spark, self.settings.path("silver/orders")).filter("order_id = 103").first()["_lsn"], 1)
         # Invalid data is durable and blocks a new publication instead of silently losing CDC.
         previous = load_publication(self.spark, self.settings)["versions"]
         with self.assertRaisesRegex(ValueError, "quarantined"):
-            self.batch([self.event("orders", self.order(100, status="UNKNOWN"), "u", 99)], 7)
+            self.batch([self.event("orders", self.order(100, status="UNKNOWN"), "u", 99)], 8)
         self.assertEqual(load_publication(self.spark, self.settings)["versions"], previous)
         self.assertEqual(read_delta(self.spark, self.settings.path("quarantine/events")).count(), 1)
 

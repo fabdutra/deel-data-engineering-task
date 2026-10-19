@@ -4,6 +4,7 @@ These are actual local executions on ARM64 with Spark 3.5.8, Delta 3.3.2 and the
 
 | Artifact | What it proves |
 |---|---|
+| `historical-join-tests.log` | Extended scenario passed: a new item joins an unchanged snapshot order, and metrics combine preexisting and newly created orders |
 | `integration-tests.log` | Real Spark/Delta scenario passed, including separate foreachBatch sessions, crash/replay, ordering and deletion guards |
 | `live-reconciliation.json` | All four CLI metrics matched PostgreSQL before and after a pipeline restart followed by a CDC update |
 | `cli-metrics.txt` | Human-readable metrics from the live stack, with publication timestamp |
