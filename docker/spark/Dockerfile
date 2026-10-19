@@ -11,7 +11,9 @@ RUN mkdir -p /opt/deel/ivy /lake /events \
        /opt/deel/scripts/warmup.py \
     && cp /opt/deel/ivy/jars/*.jar /opt/spark/jars/ \
     && chown -R 185:0 /opt/deel /lake /events
+ADD --chmod=0644 https://repo.maven.apache.org/maven2/io/delta/delta-storage/3.3.2/delta-storage-3.3.2.jar /opt/spark/jars/delta-storage-3.3.2.jar
 COPY --chown=185:0 app /opt/deel/app
+COPY --chown=185:0 sql /opt/deel/sql
 COPY --chown=185:0 tests /opt/deel/tests
 COPY --chown=185:0 scripts /opt/deel/scripts
 ENV PYTHONPATH=/opt/deel
