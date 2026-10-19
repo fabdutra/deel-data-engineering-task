@@ -1,0 +1,20 @@
+name: Validate lakehouse
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate local-only credentials
+        run: python3 scripts/setup.py
+      - name: Validate container configuration
+        run: docker compose config --quiet
+      - name: Build Spark application
+        run: docker compose build pipeline
+      - name: Test real Spark and Delta semantics
+        run: docker compose run --rm --no-deps test
