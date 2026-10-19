@@ -1,0 +1,41 @@
+Publication: batch=4 published_at=2026-10-19 00:12:33.123961 UTC
+Table display limit: 100; use --format jsonl to export every result row.
+
+open-orders
++-------------+------------+-----------+
+|delivery_date|status      |open_orders|
++-------------+------------+-----------+
+|2026-10-28   |PENDING     |4          |
+|2026-10-28   |PROCESSING  |4          |
+|2026-10-28   |REPROCESSING|3          |
+|2026-10-29   |PENDING     |4          |
+|2026-10-29   |PROCESSING  |6          |
+|2026-10-29   |REPROCESSING|3          |
++-------------+------------+-----------+
+
+
+top-delivery-dates
++-------------+-----------+
+|delivery_date|open_orders|
++-------------+-----------+
+|2026-10-29   |13         |
+|2026-10-28   |11         |
++-------------+-----------+
+
+
+pending-items
++----------+------------------+-------------+
+|product_id|pending_item_lines|pending_units|
++----------+------------------+-------------+
++----------+------------------+-------------+
+
+
+top-customers
++-----------+----------------+--------------+
+|customer_id|customer_name   |pending_orders|
++-----------+----------------+--------------+
+|4          |Creative Company|2             |
+|36         |Blue Sky LLC    |2             |
+|38         |Cars Company    |2             |
++-----------+----------------+--------------+
+

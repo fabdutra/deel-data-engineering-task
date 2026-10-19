@@ -1,0 +1,100 @@
+{
+  "timestamp_utc": "2026-10-19T00:09:57.272329+00:00",
+  "initial_reconciliation": "passed_all_four_metrics",
+  "initial_publication": {
+    "id": 1,
+    "batch_id": 1,
+    "published_at": "2026-10-19 00:09:58.489524",
+    "input_events": 3194,
+    "materialization_ms": 17922,
+    "versions": {
+      "fact_order_item": 2,
+      "dim_date": 20,
+      "dim_customer": 2,
+      "fact_order": 2,
+      "dim_product": 2
+    },
+    "queried_at": "2026-10-19 00:10:15.714452+00:00"
+  },
+  "restart_then_cdc_update": "passed_all_four_metrics",
+  "update_visibility_seconds_upper_bound": 46.561,
+  "latency_note": "Includes pipeline restart, CLI cold starts and polling; not a steady-state percentile.",
+  "changed_order_id": 471,
+  "final_publication": {
+    "id": 1,
+    "batch_id": 2,
+    "published_at": "2026-10-19 00:10:51.447409",
+    "input_events": 1,
+    "materialization_ms": 11350,
+    "versions": {
+      "fact_order_item": 2,
+      "dim_date": 22,
+      "dim_customer": 2,
+      "fact_order": 3,
+      "dim_product": 2
+    },
+    "queried_at": "2026-10-19 00:11:05.066419+00:00"
+  },
+  "metrics": {
+    "open-orders": [
+      {
+        "delivery_date": "2026-10-28",
+        "status": "PENDING",
+        "open_orders": 4
+      },
+      {
+        "delivery_date": "2026-10-28",
+        "status": "PROCESSING",
+        "open_orders": 3
+      },
+      {
+        "delivery_date": "2026-10-28",
+        "status": "REPROCESSING",
+        "open_orders": 3
+      },
+      {
+        "delivery_date": "2026-10-29",
+        "status": "PENDING",
+        "open_orders": 5
+      },
+      {
+        "delivery_date": "2026-10-29",
+        "status": "PROCESSING",
+        "open_orders": 5
+      },
+      {
+        "delivery_date": "2026-10-29",
+        "status": "REPROCESSING",
+        "open_orders": 6
+      }
+    ],
+    "top-delivery-dates": [
+      {
+        "delivery_date": "2026-10-29",
+        "open_orders": 16
+      },
+      {
+        "delivery_date": "2026-10-28",
+        "open_orders": 10
+      }
+    ],
+    "pending-items": [],
+    "top-customers": [
+      {
+        "customer_id": 2,
+        "customer_name": "Sky Company",
+        "pending_orders": 2
+      },
+      {
+        "customer_id": 4,
+        "customer_name": "Creative Company",
+        "pending_orders": 2
+      },
+      {
+        "customer_id": 5,
+        "customer_name": "Book Sellers",
+        "pending_orders": 2
+      }
+    ]
+  }
+}
