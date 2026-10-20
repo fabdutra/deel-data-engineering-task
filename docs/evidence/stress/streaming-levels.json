@@ -1,0 +1,154 @@
+[
+  {
+    "phase": "rate-300",
+    "target_events_per_second": 300,
+    "emitted_events": 29100,
+    "elapsed_seconds": 123.68974275,
+    "started_at_utc": "2026-10-20T03:35:23.410921+00:00",
+    "load_ended_at_utc": "2026-10-20T03:37:27.101203+00:00",
+    "actual_events_per_second": 235.2660726186206,
+    "source_sql_seconds": 15.938935119000163,
+    "transactions": 97,
+    "host_time_utc": "2026-10-20T03:37:31.223886+00:00",
+    "ending_sample": {
+      "phase": "rate-300",
+      "produced": 29100,
+      "expected": 29285,
+      "kafka_events": 29470,
+      "materialized": 25570,
+      "bronze": 28270,
+      "last_batch": 11,
+      "kafka_to_bronze_backlog": 1200,
+      "bronze_to_gold_backlog": 2700,
+      "source_to_kafka_backlog": 0,
+      "host_time_utc": "2026-10-20T03:37:31.223049+00:00"
+    },
+    "freshness": {
+      "batch_count": 12,
+      "median_of_batch_p95_seconds": 25.942751831054686,
+      "maximum_batch_p95_seconds": 32.46157690429688,
+      "maximum_materialization_seconds": 12.356860838999864
+    },
+    "drain": {
+      "phase": "rate-300-drain",
+      "expected": 29285,
+      "drain_seconds": 29.790300666999997,
+      "status": "caught_up",
+      "host_time_utc": "2026-10-20T03:38:01.014631+00:00"
+    }
+  },
+  {
+    "phase": "rate-1200",
+    "target_events_per_second": 1200,
+    "emitted_events": 116400,
+    "elapsed_seconds": 121.98854458399998,
+    "started_at_utc": "2026-10-20T03:38:01.014927+00:00",
+    "load_ended_at_utc": "2026-10-20T03:40:03.003970+00:00",
+    "actual_events_per_second": 954.1879559014513,
+    "source_sql_seconds": 17.457126414000356,
+    "transactions": 97,
+    "host_time_utc": "2026-10-20T03:40:07.523337+00:00",
+    "ending_sample": {
+      "phase": "rate-1200",
+      "produced": 116400,
+      "expected": 145685,
+      "kafka_events": 145870,
+      "materialized": 117070,
+      "bronze": 145870,
+      "last_batch": 19,
+      "kafka_to_bronze_backlog": 0,
+      "bronze_to_gold_backlog": 28800,
+      "source_to_kafka_backlog": 0,
+      "host_time_utc": "2026-10-20T03:40:07.522190+00:00"
+    },
+    "freshness": {
+      "batch_count": 8,
+      "median_of_batch_p95_seconds": 34.060644287109376,
+      "maximum_batch_p95_seconds": 41.724036865234375,
+      "maximum_materialization_seconds": 18.677475881999726
+    },
+    "drain": {
+      "phase": "rate-1200-drain",
+      "expected": 145685,
+      "drain_seconds": 16.65162600000002,
+      "status": "caught_up",
+      "host_time_utc": "2026-10-20T03:40:24.175553+00:00"
+    }
+  },
+  {
+    "phase": "rate-3000",
+    "target_events_per_second": 3000,
+    "emitted_events": 285000,
+    "elapsed_seconds": 120.94842529200002,
+    "started_at_utc": "2026-10-20T03:40:24.176299+00:00",
+    "load_ended_at_utc": "2026-10-20T03:42:25.125274+00:00",
+    "actual_events_per_second": 2356.3762761849775,
+    "source_sql_seconds": 21.32698803900007,
+    "transactions": 95,
+    "host_time_utc": "2026-10-20T03:42:30.422351+00:00",
+    "ending_sample": {
+      "phase": "rate-3000",
+      "produced": 285000,
+      "expected": 430685,
+      "kafka_events": 430870,
+      "materialized": 274857,
+      "bronze": 374850,
+      "last_batch": 25,
+      "kafka_to_bronze_backlog": 56020,
+      "bronze_to_gold_backlog": 99993,
+      "source_to_kafka_backlog": 0,
+      "host_time_utc": "2026-10-20T03:42:30.421075+00:00"
+    },
+    "freshness": {
+      "batch_count": 8,
+      "median_of_batch_p95_seconds": 63.72103857421875,
+      "maximum_batch_p95_seconds": 69.9110244140625,
+      "maximum_materialization_seconds": 24.454391593999844
+    },
+    "drain": {
+      "phase": "rate-3000-drain",
+      "expected": 430685,
+      "drain_seconds": 66.13182479200003,
+      "status": "caught_up",
+      "host_time_utc": "2026-10-20T03:43:36.555883+00:00"
+    }
+  },
+  {
+    "phase": "rate-6000",
+    "target_events_per_second": 6000,
+    "emitted_events": 312000,
+    "elapsed_seconds": 120.57991837500003,
+    "started_at_utc": "2026-10-20T03:43:36.556963+00:00",
+    "load_ended_at_utc": "2026-10-20T03:45:37.137447+00:00",
+    "actual_events_per_second": 2587.495531633129,
+    "source_sql_seconds": 58.47787716500011,
+    "transactions": 52,
+    "host_time_utc": "2026-10-20T03:45:42.246622+00:00",
+    "ending_sample": {
+      "phase": "rate-6000",
+      "produced": 312000,
+      "expected": 742685,
+      "kafka_events": 742870,
+      "materialized": 596855,
+      "bronze": 656848,
+      "last_batch": 33,
+      "kafka_to_bronze_backlog": 86022,
+      "bronze_to_gold_backlog": 59993,
+      "source_to_kafka_backlog": 0,
+      "host_time_utc": "2026-10-20T03:45:42.245310+00:00"
+    },
+    "freshness": {
+      "batch_count": 7,
+      "median_of_batch_p95_seconds": 74.65441674804687,
+      "maximum_batch_p95_seconds": 112.49764282226562,
+      "maximum_materialization_seconds": 33.16483101499989
+    },
+    "drain": {
+      "phase": "rate-6000-drain",
+      "expected": 742685,
+      "drain_seconds": 69.772546208,
+      "status": "caught_up",
+      "host_time_utc": "2026-10-20T03:46:52.019798+00:00"
+    }
+  }
+]

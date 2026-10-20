@@ -1,0 +1,311 @@
+{
+  "name": "cli-c1-0",
+  "query_seconds": 17.501137381999797,
+  "publication": {
+    "id": 1,
+    "batch_id": 39,
+    "published_at": "2026-10-20 03:49:33.510811",
+    "input_events": 6000,
+    "materialization_ms": 13387,
+    "versions": {
+      "fact_order_item": 40,
+      "dim_date": 41,
+      "dim_customer": 2,
+      "fact_order": 40,
+      "dim_product": 2
+    }
+  },
+  "metrics": {
+    "open-orders": {
+      "seconds": 3.8957548759999554,
+      "rows": [
+        {
+          "delivery_date": "2026-10-20",
+          "status": "PENDING",
+          "open_orders": 33
+        },
+        {
+          "delivery_date": "2026-10-21",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-10-22",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-10-23",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-10-24",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-10-25",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-10-26",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-10-27",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-10-28",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-10-29",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-10-30",
+          "status": "PENDING",
+          "open_orders": 36
+        },
+        {
+          "delivery_date": "2026-10-30",
+          "status": "REPROCESSING",
+          "open_orders": 1
+        },
+        {
+          "delivery_date": "2026-10-31",
+          "status": "PENDING",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-01",
+          "status": "PENDING",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-02",
+          "status": "PENDING",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-03",
+          "status": "PENDING",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-04",
+          "status": "PENDING",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-05",
+          "status": "PENDING",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-06",
+          "status": "PENDING",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-07",
+          "status": "PENDING",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-08",
+          "status": "PENDING",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-09",
+          "status": "PENDING",
+          "open_orders": 33
+        },
+        {
+          "delivery_date": "2026-11-10",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-11-11",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-11-12",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-11-13",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-11-14",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-11-15",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-11-16",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-11-17",
+          "status": "PENDING",
+          "open_orders": 4158
+        },
+        {
+          "delivery_date": "2026-11-18",
+          "status": "PENDING",
+          "open_orders": 4158
+        }
+      ]
+    },
+    "top-delivery-dates": {
+      "seconds": 0.8036483759997282,
+      "rows": [
+        {
+          "delivery_date": "2026-10-31",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-01",
+          "open_orders": 4159
+        },
+        {
+          "delivery_date": "2026-11-02",
+          "open_orders": 4159
+        }
+      ]
+    },
+    "pending-items": {
+      "seconds": 1.2046932500002185,
+      "rows": [
+        {
+          "product_id": 1,
+          "pending_item_lines": 556139,
+          "pending_units": 2782894
+        },
+        {
+          "product_id": 2,
+          "pending_item_lines": 8,
+          "pending_units": 3371
+        },
+        {
+          "product_id": 3,
+          "pending_item_lines": 2,
+          "pending_units": 1104
+        },
+        {
+          "product_id": 4,
+          "pending_item_lines": 3,
+          "pending_units": 1823
+        },
+        {
+          "product_id": 5,
+          "pending_item_lines": 3,
+          "pending_units": 1688
+        },
+        {
+          "product_id": 6,
+          "pending_item_lines": 5,
+          "pending_units": 1726
+        },
+        {
+          "product_id": 7,
+          "pending_item_lines": 2,
+          "pending_units": 1464
+        },
+        {
+          "product_id": 8,
+          "pending_item_lines": 4,
+          "pending_units": 3065
+        },
+        {
+          "product_id": 9,
+          "pending_item_lines": 4,
+          "pending_units": 795
+        },
+        {
+          "product_id": 11,
+          "pending_item_lines": 1,
+          "pending_units": 217
+        },
+        {
+          "product_id": 12,
+          "pending_item_lines": 3,
+          "pending_units": 1521
+        },
+        {
+          "product_id": 13,
+          "pending_item_lines": 3,
+          "pending_units": 1132
+        },
+        {
+          "product_id": 14,
+          "pending_item_lines": 4,
+          "pending_units": 2110
+        },
+        {
+          "product_id": 15,
+          "pending_item_lines": 1,
+          "pending_units": 104
+        },
+        {
+          "product_id": 16,
+          "pending_item_lines": 2,
+          "pending_units": 73
+        },
+        {
+          "product_id": 17,
+          "pending_item_lines": 3,
+          "pending_units": 1867
+        }
+      ]
+    },
+    "top-customers": {
+      "seconds": 1.225087251000332,
+      "rows": [
+        {
+          "customer_id": 1,
+          "customer_name": "Awesome Comapany 2.0",
+          "pending_orders": 112375
+        },
+        {
+          "customer_id": 2,
+          "customer_name": "Ventures Company",
+          "pending_orders": 1
+        },
+        {
+          "customer_id": 4,
+          "customer_name": "Book Sellers",
+          "pending_orders": 1
+        }
+      ]
+    }
+  },
+  "ordercounts": {
+    "total": 124756,
+    "completed": 12378
+  },
+  "itemcounts": {
+    "total": 617528,
+    "units": 3167520
+  },
+  "recorded_at_utc": "2026-10-20T03:50:23.450468+00:00"
+}

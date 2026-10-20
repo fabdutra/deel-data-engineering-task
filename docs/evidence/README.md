@@ -11,6 +11,15 @@ These are actual local executions on ARM64 with Spark 3.5.8, Delta 3.3.2 and the
 | `benchmark-100k-orders.json` | 100,000 orders, 500,000 items and 200 dimension events materialized; 10,000 order updates applied |
 | `benchmark-spark-tasks.json` | CPU, task-duration, GC, shuffle and spill metrics extracted from that benchmark's Spark event log |
 | `streaming-progress-summary.jsonl` | Native nonempty streaming-batch durations; reported input rows can include repeated scans |
+| `stress/materialization.json` and `stress/*spark-metrics.json` | Larger fixtures up to 1m orders/5m items; native task evidence of pressure/spill and Gold cost |
+| `stress/streaming-levels.json` and `stress/streaming-batches.json` | Actual arrival rates, backlog/drain measurements and within-batch freshness estimates |
+| `stress/reconciliation.jsonl` and `stress/final-integrity.json` | All four source/Gold metrics matched three times; 774,001 raw events/unique coordinates and final business counts agreed |
+| `stress/query-output.json` | Captured four-metric output, including nonempty pending-item results and the pinned Gold publication, from the stress query harness |
+| `stress/broker-outage.jsonl` and `stress/query-concurrency.jsonl` | Temporary broker outage recovered; one/two/four fresh query containers completed |
+
+The [stress report](../performance-stress.md) explains the later campaign, measurement methods and limits. It supplements the initial evidence below: the six-million-event fixture took **370.5 s** with **846 MB task disk spill**; short load steps above approximately **2,000 actual events/s** accumulated backlog. This supports a measured bottleneck discussion, not an absolute production-capacity or freshness guarantee. The shared stress exports total approximately 120 KB; personal notes and large raw logs remain excluded.
+
+The PDF lists data/Spark UI screenshots as examples of execution evidence. This submission currently supplies actual CLI output, logs, query results, reconciliations and native metric extracts; **no Spark UI screenshots are included**. These are captured executions, not simulated screenshots. The optional History Server and live UI are documented in the root README for further inspection.
 
 The synthetic benchmark wrote Bronze in **1.567 s**, materialized **600,200 events in 43.764 s** (about **13,714 unique input events/s** for that job), and applied **10,000 order updates in 13.111 s**. Those updates also refresh their 50,000 associated item facts. This was an isolated materialization workload, not Kafka ingestion throughput, and its target tables are smaller than a production lake.
 

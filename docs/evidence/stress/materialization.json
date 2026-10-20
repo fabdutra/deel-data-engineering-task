@@ -1,0 +1,282 @@
+[
+  {
+    "name": "hot-1m-items",
+    "orders": 1,
+    "items": 1000000,
+    "events": 1000201,
+    "hot": true,
+    "init_seconds": 8.846171211999945,
+    "bronze_seconds": 1.8400928759999715,
+    "initial_seconds": 50.07735660700007,
+    "update_seconds": 14.131200714999977,
+    "initial_events_per_second": 19973.118945742972,
+    "correctness": "passed",
+    "recorded_at_utc": "2026-10-20T03:03:39.802877+00:00",
+    "phases": [
+      {
+        "batch_id": 0,
+        "phase": "initial",
+        "online": false,
+        "merge_seconds": {
+          "silver/customers": 1.9152859600000056,
+          "silver/products": 1.675891626000066,
+          "silver/orders": 1.2948699580000493,
+          "silver/order_items": 10.492830130000016,
+          "gold/fact_order": 1.3262241670000776,
+          "gold/fact_order_item": 18.211541425000064,
+          "gold/dim_date": 1.6092830009999943,
+          "gold/dim_customer": 1.1186881680000624,
+          "gold/dim_product": 1.8340371670000195,
+          "gold/publication": 0.6338405830000511
+        },
+        "gold_seconds": 24.23437534499999,
+        "input_events": 1000201,
+        "publication_seconds": 1.6086256669999557,
+        "status": "committed",
+        "wall_seconds": 50.07647177299998,
+        "silver_merge_seconds": 15.378877674000137,
+        "validation_and_other_seconds": 8.854593086999898,
+        "recorded_at_utc": "2026-10-20T03:03:23.742583+00:00"
+      },
+      {
+        "batch_id": 1,
+        "phase": "update",
+        "online": false,
+        "merge_seconds": {
+          "silver/customers": 0.125584291999985,
+          "silver/products": 0.10354741699995884,
+          "silver/orders": 0.8408099170000014,
+          "silver/order_items": 0.08216249999998126,
+          "gold/fact_order": 1.5078426679999666,
+          "gold/fact_order_item": 7.216323752999983,
+          "gold/dim_date": 1.534955167000021,
+          "gold/dim_customer": 0.0891226659999802,
+          "gold/dim_product": 0.07654204100003881,
+          "gold/publication": 0.7729777079999849
+        },
+        "gold_seconds": 10.556775087999995,
+        "input_events": 1,
+        "publication_seconds": 1.3238549179999382,
+        "status": "committed",
+        "wall_seconds": 14.130889047999972,
+        "silver_merge_seconds": 1.1521041259999265,
+        "validation_and_other_seconds": 1.0981549160001123,
+        "recorded_at_utc": "2026-10-20T03:03:37.906336+00:00"
+      }
+    ],
+    "resources": {
+      "samples": 13,
+      "max_cpu_percent": 205.36,
+      "max_sampled_memory_mib": 1983.488
+    }
+  },
+  {
+    "name": "scale-100k",
+    "orders": 100000,
+    "items": 500000,
+    "events": 600200,
+    "hot": false,
+    "init_seconds": 8.092113460999997,
+    "bronze_seconds": 1.65553541700001,
+    "initial_seconds": 40.593880851999984,
+    "update_seconds": 12.581512797000016,
+    "initial_events_per_second": 14785.479668432077,
+    "correctness": "passed",
+    "recorded_at_utc": "2026-10-20T02:51:58.275026+00:00",
+    "phases": [
+      {
+        "batch_id": 0,
+        "phase": "initial",
+        "online": false,
+        "merge_seconds": {
+          "silver/customers": 1.1834808760000044,
+          "silver/products": 0.8098800420000032,
+          "silver/orders": 2.8015262099999916,
+          "silver/order_items": 6.508065377999998,
+          "gold/fact_order": 3.455569168000011,
+          "gold/fact_order_item": 12.960082505999992,
+          "gold/dim_date": 3.9695362520000117,
+          "gold/dim_customer": 1.0513705419999724,
+          "gold/dim_product": 0.9145684580000193,
+          "gold/publication": 0.2562510829999951
+        },
+        "gold_seconds": 22.502003593000012,
+        "input_events": 600200,
+        "publication_seconds": 0.7173073759999511,
+        "status": "committed",
+        "wall_seconds": 40.59356276899999,
+        "silver_merge_seconds": 11.302952505999997,
+        "validation_and_other_seconds": 6.071299294000028,
+        "recorded_at_utc": "2026-10-20T02:51:43.486697+00:00"
+      },
+      {
+        "batch_id": 1,
+        "phase": "update",
+        "online": false,
+        "merge_seconds": {
+          "silver/customers": 0.06433199999997896,
+          "silver/products": 0.07725270800000317,
+          "silver/orders": 1.7550755010000216,
+          "silver/order_items": 0.08125337499996022,
+          "gold/fact_order": 1.9335377929999709,
+          "gold/fact_order_item": 3.6022772940000323,
+          "gold/dim_date": 3.038597917000004,
+          "gold/dim_customer": 0.08161658300002728,
+          "gold/dim_product": 0.0945656249999729,
+          "gold/publication": 0.847268750000012
+        },
+        "gold_seconds": 8.85770662799996,
+        "input_events": 10000,
+        "publication_seconds": 1.1883831250000298,
+        "status": "committed",
+        "wall_seconds": 12.581242505000034,
+        "silver_merge_seconds": 1.977913583999964,
+        "validation_and_other_seconds": 0.5572391680000806,
+        "recorded_at_utc": "2026-10-20T02:51:56.102700+00:00"
+      }
+    ],
+    "resources": null
+  },
+  {
+    "name": "scale-1m",
+    "orders": 1000000,
+    "items": 5000000,
+    "events": 6000200,
+    "hot": false,
+    "init_seconds": 7.556152877999978,
+    "bronze_seconds": 5.143497418999971,
+    "initial_seconds": 370.52923425,
+    "update_seconds": 49.601251730999934,
+    "initial_events_per_second": 16193.59404162858,
+    "correctness": "passed",
+    "recorded_at_utc": "2026-10-20T03:02:19.274845+00:00",
+    "phases": [
+      {
+        "batch_id": 0,
+        "phase": "initial",
+        "online": false,
+        "merge_seconds": {
+          "silver/customers": 2.294851625999968,
+          "silver/products": 1.6987593759999982,
+          "silver/orders": 15.866661881000027,
+          "silver/order_items": 59.94673531900003,
+          "gold/fact_order": 26.37857980399997,
+          "gold/fact_order_item": 149.03028586000005,
+          "gold/dim_date": 51.03170860699993,
+          "gold/dim_customer": 3.260732251000036,
+          "gold/dim_product": 2.5996116259999553,
+          "gold/publication": 0.5858825829999432
+        },
+        "gold_seconds": 232.45887502300002,
+        "input_events": 6000200,
+        "publication_seconds": 1.7031023340000502,
+        "status": "committed",
+        "wall_seconds": 370.52888820899994,
+        "silver_merge_seconds": 79.80700820200002,
+        "validation_and_other_seconds": 56.559902649999856,
+        "recorded_at_utc": "2026-10-20T03:01:26.815851+00:00"
+      },
+      {
+        "batch_id": 1,
+        "phase": "update",
+        "online": false,
+        "merge_seconds": {
+          "silver/customers": 0.18871029199999612,
+          "silver/products": 0.1579599589999816,
+          "silver/orders": 9.352700796000022,
+          "silver/order_items": 0.08774162500003513,
+          "gold/fact_order": 9.066373879999901,
+          "gold/fact_order_item": 19.183637548999968,
+          "gold/dim_date": 8.093576254000027,
+          "gold/dim_customer": 0.0822621249999429,
+          "gold/dim_product": 0.09648225000000821,
+          "gold/publication": 0.8548499590000347
+        },
+        "gold_seconds": 36.6361261830001,
+        "input_events": 100000,
+        "publication_seconds": 1.1893417920000502,
+        "status": "committed",
+        "wall_seconds": 49.600807230999976,
+        "silver_merge_seconds": 9.787112672000035,
+        "validation_and_other_seconds": 1.98822658399979,
+        "recorded_at_utc": "2026-10-20T03:02:16.437763+00:00"
+      }
+    ],
+    "resources": {
+      "samples": 69,
+      "max_cpu_percent": 207.51,
+      "max_sampled_memory_mib": 2797.568
+    }
+  },
+  {
+    "name": "scale-500k",
+    "orders": 500000,
+    "items": 2500000,
+    "events": 3000200,
+    "hot": false,
+    "init_seconds": 8.080177961999993,
+    "bronze_seconds": 3.2190056270000014,
+    "initial_seconds": 139.228421395,
+    "update_seconds": 24.761588302999996,
+    "initial_events_per_second": 21548.76116485038,
+    "correctness": "passed",
+    "recorded_at_utc": "2026-10-20T02:54:59.052842+00:00",
+    "phases": [
+      {
+        "batch_id": 0,
+        "phase": "initial",
+        "online": false,
+        "merge_seconds": {
+          "silver/customers": 1.3305555840000238,
+          "silver/products": 0.875763543000005,
+          "silver/orders": 7.535230627999965,
+          "silver/order_items": 19.907718217000024,
+          "gold/fact_order": 12.993867256999977,
+          "gold/fact_order_item": 51.32441635699996,
+          "gold/dim_date": 17.880346132,
+          "gold/dim_customer": 1.2661387510000282,
+          "gold/dim_product": 0.9715127079999775,
+          "gold/publication": 0.3366441250000207
+        },
+        "gold_seconds": 84.56623345500003,
+        "input_events": 3000200,
+        "publication_seconds": 0.7734207089999927,
+        "status": "committed",
+        "wall_seconds": 139.22802218700002,
+        "silver_merge_seconds": 29.64926797200002,
+        "validation_and_other_seconds": 24.23910005099998,
+        "recorded_at_utc": "2026-10-20T02:54:31.766923+00:00"
+      },
+      {
+        "batch_id": 1,
+        "phase": "update",
+        "online": false,
+        "merge_seconds": {
+          "silver/customers": 0.07493262500003084,
+          "silver/products": 0.07766774999998916,
+          "silver/orders": 4.198552001999985,
+          "silver/order_items": 0.110024707999969,
+          "gold/fact_order": 4.446781544000032,
+          "gold/fact_order_item": 8.543789169999968,
+          "gold/dim_date": 4.741391417999978,
+          "gold/dim_customer": 0.08876025000000709,
+          "gold/dim_product": 0.07409216700000343,
+          "gold/publication": 0.6686985009999944
+        },
+        "gold_seconds": 18.07487659100002,
+        "input_events": 50000,
+        "publication_seconds": 0.9959113339999703,
+        "status": "committed",
+        "wall_seconds": 24.761350719000006,
+        "silver_merge_seconds": 4.461177084999974,
+        "validation_and_other_seconds": 1.2293857090000415,
+        "recorded_at_utc": "2026-10-20T02:54:56.564090+00:00"
+      }
+    ],
+    "resources": {
+      "samples": 29,
+      "max_cpu_percent": 202.53,
+      "max_sampled_memory_mib": 2798.592
+    }
+  }
+]

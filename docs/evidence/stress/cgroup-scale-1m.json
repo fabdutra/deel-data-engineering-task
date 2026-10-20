@@ -1,0 +1,1 @@
+{"memory.current": "2317950976\n", "memory.peak": "3221229568\n", "memory.events": "low 0\nhigh 0\nmax 673\noom 0\noom_kill 0\noom_group_kill 0\n", "cpu.stat": "usage_usec 809172397\nuser_usec 797819930\nsystem_usec 11352467\nnice_usec 0\nnr_periods 4177\nnr_throttled 3485\nthrottled_usec 227758272\nnr_bursts 0\nburst_usec 0\n"}

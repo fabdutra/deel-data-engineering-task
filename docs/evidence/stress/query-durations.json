@@ -1,0 +1,72 @@
+[
+  {
+    "name": "cli-c4-1",
+    "query_seconds": 54.55409744100007,
+    "metrics": {
+      "open-orders": 12.614643421999972,
+      "top-delivery-dates": 2.3084428340002887,
+      "pending-items": 5.0666431690001446,
+      "top-customers": 4.8201543350000975
+    }
+  },
+  {
+    "name": "cli-c4-0",
+    "query_seconds": 51.67674806500008,
+    "metrics": {
+      "open-orders": 11.392599796000013,
+      "top-delivery-dates": 2.923145543999908,
+      "pending-items": 3.8615096679995986,
+      "top-customers": 4.520115168999837
+    }
+  },
+  {
+    "name": "cli-c4-2",
+    "query_seconds": 52.760559190000095,
+    "metrics": {
+      "open-orders": 12.090260921000208,
+      "top-delivery-dates": 2.629262377000032,
+      "pending-items": 4.475645877999796,
+      "top-customers": 4.498658377000083
+    }
+  },
+  {
+    "name": "cli-c4-3",
+    "query_seconds": 53.7093417330002,
+    "metrics": {
+      "open-orders": 12.061173379999673,
+      "top-delivery-dates": 2.829884667999977,
+      "pending-items": 4.784732169000108,
+      "top-customers": 4.694292001999656
+    }
+  },
+  {
+    "name": "cli-c2-1",
+    "query_seconds": 26.191321677999895,
+    "metrics": {
+      "open-orders": 5.38537350300021,
+      "top-delivery-dates": 1.4202191250001306,
+      "pending-items": 2.094680043000153,
+      "top-customers": 1.5852355839997472
+    }
+  },
+  {
+    "name": "cli-c2-0",
+    "query_seconds": 26.560028054000213,
+    "metrics": {
+      "open-orders": 5.481804044,
+      "top-delivery-dates": 1.3272743760003323,
+      "pending-items": 2.280721084999641,
+      "top-customers": 1.7147965839999415
+    }
+  },
+  {
+    "name": "cli-c1-0",
+    "query_seconds": 17.501137381999797,
+    "metrics": {
+      "open-orders": 3.8957548759999554,
+      "top-delivery-dates": 0.8036483759997282,
+      "pending-items": 1.2046932500002185,
+      "top-customers": 1.225087251000332
+    }
+  }
+]
