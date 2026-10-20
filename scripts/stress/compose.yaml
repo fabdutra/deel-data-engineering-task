@@ -1,0 +1,20 @@
+services:
+  transactions-db:
+    image: deel-assessment-transactions-db:latest
+  pipeline:
+    entrypoint: [/bin/bash, /stress/run.sh]
+    command: [online]
+    volumes:
+      - ./scripts/stress:/stress:ro
+    environment:
+      LAKE_ROOT: /lake/online
+  test:
+    entrypoint: [/bin/bash, /stress/run.sh]
+    volumes:
+      - ./scripts/stress:/stress:ro
+  query:
+    environment:
+      LAKE_ROOT: /lake/online
+    entrypoint: [/bin/bash, /stress/run.sh]
+    volumes:
+      - ./scripts/stress:/stress:ro
