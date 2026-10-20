@@ -1,6 +1,8 @@
 # Spark sizing, performance and scale strategy
 
-## Local sizing and objective
+This document covers the assessment's two requested items: **Spark cluster sizing strategy** and **key Spark metrics used**. The [local sizing decision](#spark-cluster-sizing-strategy-local-deployment) is implemented and exercised; the [production sizing strategy](#spark-cluster-sizing-strategy-production) is a measurement-driven method, not a validated production cluster specification. The [metrics and their limits](#key-spark-metrics-used) are recorded below.
+
+## Spark cluster sizing strategy: local deployment
 
 The implementation runs on an ARM64 development machine whose Docker VM has approximately 8 GB RAM and 10 available logical CPUs. The local Spark application uses `local[2]`: the driver and tasks share one JVM with two task slots, a 2 GiB heap and a 3 GiB container limit. This is explicitly a development sizing choice, not a production executor layout. Four shuffle partitions keep small joins/windows/merges parallel without the default 200-task overhead. Both streams share those slots.
 
@@ -13,7 +15,7 @@ The implementation runs on an ARM64 development machine whose Docker VM has appr
 | One-off CLI | 1.5 GiB | 1 | 768 MiB heap; only allocated during a query |
 | Test/benchmark | 3 GiB | 2 | Run separately for representative measurements |
 
-The baseline stays comfortably below the VM's RAM; memory caps are limits, not reservations. Do not run history, load tests and extra query containers together on an 8 GB VM. Startup batches/backfills are measured separately from warm batches. The near-real-time objective is a healthy pipeline that keeps up with arrivals and makes changes queryable within tens of seconds; this is an objective to validate, not an asserted production SLA.
+The resource budgets were chosen to fit the local VM while leaving room for the source and CDC. Memory caps are limits, not reservations, and measured peak-memory headroom has not been established. Do not run history, load tests and extra query containers together on an 8 GB VM. Startup batches/backfills are measured separately from warm batches. The near-real-time objective is a healthy pipeline that keeps up with arrivals and makes changes queryable within tens of seconds; this is an objective to validate, not an asserted production SLA.
 
 Triggers default to 10 seconds, Kafka ingestion to at most 20,000 offsets per trigger and file ingestion to 32 files per trigger. Those bound intake, not total memory: one file may contain many rows, and a single parent update may affect many children. Increasing `maxOffsetsPerTrigger` trades backlog reduction for batch duration and pressure on downstream MERGE. `maxRecordsPerFile=1000000` is an upper bound and does not eliminate small files.
 
@@ -33,7 +35,9 @@ These are engineering starting choices exercised by the recorded workload, not t
 
 The observed environment and benchmark sizes are known; production arrival rate, event-size distribution, update/delete mix, hot-key fanout, query concurrency, remote storage throughput and a numeric freshness SLA were not supplied. Those unknowns prevent a defensible fixed production executor count.
 
-## Measured results and what they support
+## Key Spark metrics used
+
+The local resource budget was selected first; these metrics were then used to assess feasibility and identify follow-up investigations. They were not used to derive an optimal executor count or prove that the chosen heap has ample headroom. Native task/streaming metrics and the application's benchmark/visibility timings are distinguished in the table: unique-event throughput and end-to-end visibility are application measurements, not executor-utilization metrics.
 
 | Measurement | Recorded result | Interpretation |
 |---|---:|---|
@@ -53,7 +57,16 @@ Sources: [benchmark](evidence/benchmark-100k-orders.json), [Spark tasks](evidenc
 
 These observations support feasibility for the exercised local workload. They do not establish sustained production capacity, a minimum viable heap, a millions-of-orders target-table profile, or an optimal partition count. The slower materialization batches motivate a sustained backlog/freshness test before promising an SLA.
 
-## How to size a production cluster
+| Sizing decision checked | Metrics used | Conclusion and next decision |
+|---|---|---|
+| Local two-slot / 2 GiB heap budget | Successful workload, zero failed task attempts and zero recorded task spill | The workload completed at this size; peak memory and sustained utilization are still needed before reducing resources or claiming spare capacity |
+| Ten-second triggers | Materialization batch durations, publication timing and observed visibility | Several sampled batches exceeded the interval; measure sustained backlog before claiming that the cadence meets a latency objective |
+| Four shuffle partitions | Shuffle bytes and task durations/counts | A measured baseline exists, but no A/B comparison establishes four as optimal; compare partition counts at representative target-table size |
+| Scale-out requirements | Executor CPU/run time and stage/task distribution | Useful diagnostic evidence, but no per-executor capacity or horizontal-scaling curve has been measured; production executor count remains to be validated |
+
+## Spark cluster sizing strategy: production
+
+**Decision status:** the delivered application has a concrete local sizing configuration. A production cluster size has not been selected or proven. The strategy below explains which variables determine that size and how it would be accepted through representative load tests. Running with `local[2]` does not validate a distributed cluster topology.
 
 Record input rate λ (events/s), burst multiplier, average/p95 event bytes, retained table bytes and file count, changed entity distribution, children per parent (including hot keys), source snapshot size, per-stage CPU time, shuffle/spill, storage throughput and the freshness objective. Total historical row count alone does not determine the cluster.
 
