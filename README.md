@@ -4,6 +4,24 @@ A Dockerized PySpark Structured Streaming application that combines the source d
 
 This repository preserves the complete history of [Deel's starter repository](https://github.com/juan-domingos-deel/deel-data-engineering-task). A private independent copy is used because GitHub does not allow a private fork of a public repository.
 
+## Reviewer guide: deliverables and evidence
+
+Start with the [assessment requirements mapped to the implementation](docs/assessment-deliverables.md). The table below links each deliverable to its documentation, implementation or recorded execution evidence.
+
+| Deliverable / review topic | Where to look | What to inspect |
+|---|---|---|
+| Run the Dockerized solution | [Run instructions](#run), [Compose stack](docker-compose.yaml) | Setup, startup, container dependencies and commands to query the metrics |
+| Spark Structured Streaming and historical-data joins | [Historical-data join contract](docs/architecture.md#joining-cdc-with-historical-data), [pipeline](app/pipeline.py), [Gold processing](app/gold.py) | Debezium snapshot + CDC, accumulated Silver state and joins with records absent from the current batch |
+| Consistent dimensional output | [Architecture and data model](docs/architecture.md), [business definitions](#business-definitions-and-data-model) | Fact/dimension grains, Delta tables, status propagation and publication consistency |
+| Architecture diagram | [Component diagram](docs/architecture.md#architecture-and-data-contracts) | Source, Debezium, Kafka, Spark, medallion storage, CLI and observability |
+| Spark cluster sizing strategy and decision variables | [Local sizing](docs/performance.md#spark-cluster-sizing-strategy-local-deployment), [production sizing strategy](docs/performance.md#spark-cluster-sizing-strategy-production) | CPU/heap/container budgets, intake limits, workload assumptions and scaling decisions |
+| Key Spark metrics | [Initial metrics and interpretation](docs/performance.md#key-spark-metrics-used), [stress task metrics](docs/performance-stress.md#key-native-spark-metrics), [native streaming progress](docs/evidence/stress/online-progress-summary.jsonl) | CPU, task durations/failures, GC, shuffle, spill and streaming batch duration |
+| Four business queries and CLI access | [CLI commands](#run), [SQL definitions](sql/), [recorded CLI output](docs/evidence/cli-metrics.txt), [stress query results](docs/evidence/stress/query-output.json) | Open orders, top delivery dates, pending items and top customers, with publication metadata |
+| Evidence of the application running | [Evidence index](docs/evidence/README.md), [integration execution](docs/evidence/integration-tests.log), [historical-join execution](docs/evidence/historical-join-tests.log) | Actual test logs, CLI/query results, source reconciliation and native metrics; no Spark UI screenshots are included |
+| Performance, limits and recovery under load | [Stress report](docs/performance-stress.md), [recorded results](docs/evidence/stress/) | Million-order fixture, intake experiment, freshness/backlog, broker recovery and query concurrency |
+| Data correctness and reconciliation | [Correctness and recovery contract](#correctness-and-recovery), [three stress reconciliations](docs/evidence/stress/reconciliation.jsonl), [final integrity checks](docs/evidence/stress/final-integrity.json) | Four metrics compared with PostgreSQL, raw-event uniqueness, final counts and replay/delete behavior |
+| Validation, operations and security | [Validation commands](#validation-and-evidence), [operations and security](#operations-and-security) | Repeatable integration/benchmark commands, checkpoints, recovery, credentials and local deployment boundaries |
+
 ## Run
 
 Requirements: Docker Desktop with approximately **8 GB assigned to its Linux VM**, Docker Compose v2, Python 3 for credential setup, and internet access during the initial build. Images support ARM64 and AMD64. No local Spark or Java installation is required.
@@ -73,7 +91,7 @@ docker compose run --rm --no-deps test benchmark --orders 1000000 --items-per-or
 
 The integration scenario covers snapshot + CDC, all four metrics, duplicate deliveries, event ordering, quantity changes, parent status propagation, crash before publication, replay, key-only deletes, stale resurrection attempts, late parents, unknown dimensions, null dates, tombstones, invalid-event quarantine and the separate Spark sessions used by `foreachBatch`.
 
-[Recorded evidence](docs/evidence/) includes actual execution output; benchmark size and measurement limitations are explicit. CI builds the same image and runs the integration scenario.
+[Recorded evidence](docs/evidence/) includes actual CLI/query output, Spark/Delta test logs, source-to-Gold reconciliations and native metrics. The [stress report](docs/performance-stress.md) extends this to one million orders/five million items, stepped CDC load, query concurrency and temporary broker outage recovery, with explicit memory/freshness limits. These are execution artifacts; Spark UI screenshots are not included. CI builds the same image and runs the integration scenario.
 
 ## Operations and security
 
@@ -93,4 +111,4 @@ Credentials are generated in an ignored `.env` with mode `0600`, and are not pri
 
 The original upstream commits contain demo credentials; preserving upstream history means those historical literals still exist. New local credentials are different, and current application/configuration files do not embed passwords. Do not reuse any upstream example credentials.
 
-Personal interview context and the assessment PDF remain local and ignored. Development branches separate platform setup, ingestion, processing, serving and verification; merge commits preserve the implementation path. Before submission, publish privately under `fabdutra` and grant the assessment reviewers (`juan-domingos-deel`, `xi-wang-deel`) access. No public upstream PR is necessary.
+Personal interview context and the assessment PDF remain local and ignored. Development branches separate platform setup, ingestion, processing, serving and verification; merge commits preserve the implementation path. The private delivery repository is [fabdutra/deel-data-engineering-task](https://github.com/fabdutra/deel-data-engineering-task). The designated assessment reviewers are `juan-domingos-deel` and `xi-wang-deel`; access is managed through GitHub collaborator invitations, which recipients must accept. No public upstream PR is necessary.
