@@ -1,0 +1,2 @@
+{"batch_duration_ms_max": 2610, "batch_duration_ms_p50": 848, "batch_duration_ms_p95": 1447, "nonempty_batches": 62, "query": "kafka_to_bronze", "reported_input_rows": 774001}
+{"batch_duration_ms_max": 33262, "batch_duration_ms_p50": 15007, "batch_duration_ms_p95": 29825, "nonempty_batches": 40, "query": "bronze_to_gold", "reported_input_rows": 884644}

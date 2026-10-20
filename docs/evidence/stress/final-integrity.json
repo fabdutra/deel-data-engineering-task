@@ -1,0 +1,46 @@
+{
+  "event_counters": {
+    "kafka_events": 774001,
+    "bronze": 774001,
+    "materialized": 774001,
+    "host_time_utc": "2026-10-20T03:52:28.602287+00:00"
+  },
+  "physical_bronze_check": {
+    "rows": 774001,
+    "unique_coordinates": 774001,
+    "expected": 774001,
+    "correctness": "passed",
+    "recorded_at_utc": "2026-10-20T03:52:44.335302+00:00"
+  },
+  "aggregate_reconciliation": {
+    "source": {
+      "ordercounts": {
+        "total": 124756,
+        "completed": 12378
+      },
+      "itemcounts": {
+        "total": 617528,
+        "units": 3167520
+      }
+    },
+    "gold": {
+      "ordercounts": {
+        "total": 124756,
+        "completed": 12378
+      },
+      "itemcounts": {
+        "total": 617528,
+        "units": 3167520
+      }
+    },
+    "passed": true,
+    "host_time_utc": "2026-10-20T03:52:27.084208+00:00"
+  },
+  "service_state": {
+    "running": {
+      "deel-assessment": [],
+      "deel-stress": []
+    },
+    "host_time_utc": "2026-10-20T03:52:58.207380+00:00"
+  }
+}

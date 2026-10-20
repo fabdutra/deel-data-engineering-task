@@ -2,6 +2,8 @@
 
 This document covers the assessment's two requested items: **Spark cluster sizing strategy** and **key Spark metrics used**. The [local sizing decision](#spark-cluster-sizing-strategy-local-deployment) is implemented and exercised; the [production sizing strategy](#spark-cluster-sizing-strategy-production) is a measurement-driven method, not a validated production cluster specification. The [metrics and their limits](#key-spark-metrics-used) are recorded below.
 
+The subsequent [stress campaign](performance-stress.md) extends the initial evidence to six million input events, stepped CDC load, broker recovery and query concurrency. It found memory pressure/spill on large materializations and growing backlog above approximately 2,000 actual input events/s with the current intake cap. Completion and correctness were verified; a strict 30-second freshness SLA was not established.
+
 ## Spark cluster sizing strategy: local deployment
 
 The implementation runs on an ARM64 development machine whose Docker VM has approximately 8 GB RAM and 10 available logical CPUs. The local Spark application uses `local[2]`: the driver and tasks share one JVM with two task slots, a 2 GiB heap and a 3 GiB container limit. This is explicitly a development sizing choice, not a production executor layout. Four shuffle partitions keep small joins/windows/merges parallel without the default 200-task overhead. Both streams share those slots.
@@ -15,7 +17,7 @@ The implementation runs on an ARM64 development machine whose Docker VM has appr
 | One-off CLI | 1.5 GiB | 1 | 768 MiB heap; only allocated during a query |
 | Test/benchmark | 3 GiB | 2 | Run separately for representative measurements |
 
-The resource budgets were chosen to fit the local VM while leaving room for the source and CDC. Memory caps are limits, not reservations, and measured peak-memory headroom has not been established. Do not run history, load tests and extra query containers together on an 8 GB VM. Startup batches/backfills are measured separately from warm batches. The near-real-time objective is a healthy pipeline that keeps up with arrivals and makes changes queryable within tens of seconds; this is an objective to validate, not an asserted production SLA.
+The resource budgets were chosen to fit the local VM while leaving room for the source and CDC. Memory caps are limits, not reservations. The subsequent million-order stress fixture reached approximately the 3 GiB cgroup cap and recorded spill without OOM; ample memory headroom is not demonstrated. Avoid combining heavy benchmarks, History Server and extra query containers on an 8 GB VM. Startup batches/backfills are measured separately from warm batches. The near-real-time objective is a healthy pipeline that keeps up with arrivals and makes changes queryable within tens of seconds; this is an objective to validate, not an asserted production SLA.
 
 Triggers default to 10 seconds, Kafka ingestion to at most 20,000 offsets per trigger and file ingestion to 32 files per trigger. Those bound intake, not total memory: one file may contain many rows, and a single parent update may affect many children. Increasing `maxOffsetsPerTrigger` trades backlog reduction for batch duration and pressure on downstream MERGE. `maxRecordsPerFile=1000000` is an upper bound and does not eliminate small files.
 
@@ -37,7 +39,7 @@ The observed environment and benchmark sizes are known; production arrival rate,
 
 ## Key Spark metrics used
 
-The local resource budget was selected first; these metrics were then used to assess feasibility and identify follow-up investigations. They were not used to derive an optimal executor count or prove that the chosen heap has ample headroom. Native task/streaming metrics and the application's benchmark/visibility timings are distinguished in the table: unique-event throughput and end-to-end visibility are application measurements, not executor-utilization metrics.
+The local resource budget was selected first; these metrics were then used to assess feasibility and identify follow-up investigations. They were not used to derive an optimal executor count or prove that the chosen heap has ample headroom. The table below is the **initial baseline**, retained separately from the [later stress metrics](performance-stress.md#key-native-spark-metrics). Native task/streaming metrics and the application's benchmark/visibility timings are distinguished: unique-event throughput and end-to-end visibility are application measurements, not executor-utilization metrics.
 
 | Measurement | Recorded result | Interpretation |
 |---|---:|---|
@@ -55,12 +57,12 @@ The local resource budget was selected first; these metrics were then used to as
 
 Sources: [benchmark](evidence/benchmark-100k-orders.json), [Spark tasks](evidence/benchmark-spark-tasks.json), [streaming progress](evidence/streaming-progress-summary.jsonl) and [live reconciliation](evidence/live-reconciliation.json). The progress helper selects a lower order statistic without interpolation, so its p95 on these tiny samples is an approximate sample summary, not an SLA estimate. Task input-byte totals include repeated reads and must not be interpreted as unique lake bytes or physical network traffic.
 
-These observations support feasibility for the exercised local workload. They do not establish sustained production capacity, a minimum viable heap, a millions-of-orders target-table profile, or an optimal partition count. The slower materialization batches motivate a sustained backlog/freshness test before promising an SLA.
+The initial observations support feasibility for that workload. The subsequent stress campaign exercised one million orders/five million items and short stepped arrival rates of 235–2,588 actual events/s, identifying pressure and backlog/freshness degradation. Neither campaign establishes sustained production capacity, a minimum viable heap, an optimal partition count or a validated production SLA.
 
 | Sizing decision checked | Metrics used | Conclusion and next decision |
 |---|---|---|
-| Local two-slot / 2 GiB heap budget | Successful workload, zero failed task attempts and zero recorded task spill | The workload completed at this size; peak memory and sustained utilization are still needed before reducing resources or claiming spare capacity |
-| Ten-second triggers | Materialization batch durations, publication timing and observed visibility | Several sampled batches exceeded the interval; measure sustained backlog before claiming that the cadence meets a latency objective |
+| Local two-slot / 2 GiB heap budget | Baseline completed without spill; six-million-event stress fixture recorded 846 MB disk spill and memory pressure near the container cap, without OOM | The exercised workloads completed; large backfills need their own budget. Spare capacity and minimum heap are not established |
+| Ten-second triggers | Native stress materialization p95 29.825 s; growing backlog in steps above 2,000 actual events/s; within-batch freshness estimates | Trigger cadence does not guarantee freshness. The tested 30-second reference was exceeded; improve the bottleneck and validate longer loads before promising an SLA |
 | Four shuffle partitions | Shuffle bytes and task durations/counts | A measured baseline exists, but no A/B comparison establishes four as optimal; compare partition counts at representative target-table size |
 | Scale-out requirements | Executor CPU/run time and stage/task distribution | Useful diagnostic evidence, but no per-executor capacity or horizontal-scaling curve has been measured; production executor count remains to be validated |
 
@@ -113,6 +115,6 @@ docker compose cp pipeline:/lake/observability/progress ./artifacts/progress
 python3 scripts/progress_report.py ./artifacts/progress
 ```
 
-The benchmark reports fixture volume, execution settings, Bronze write time, materialization time, update time and correctness. It is not Kafka throughput or a production capacity claim. The live test reports an upper bound on change visibility including pipeline restart, CLI cold starts and polling; this is not steady-state p95 latency. Actual results are retained in [evidence](evidence/).
+The benchmark reports fixture volume, execution settings, Bronze write time, materialization time, update time and correctness. It is not Kafka throughput or a production capacity claim. The initial live test reports an upper bound on change visibility including pipeline restart, CLI cold starts and polling; this is not steady-state p95 latency. The later [stress report](performance-stress.md) separates ingestion bursts, materialization, within-batch freshness estimates and query cold starts. Actual results are retained in [evidence](evidence/).
 
 Alert on sustained freshness/batch-duration breaches, growing Kafka or Bronze lag, query exceptions, quarantine rows, source WAL retention, disk usage and small-file growth. Persist logs centrally in production. Retention/compaction must preserve at least the active publication's versions, the longest reader and the maximum recovery window; automatic VACUUM is intentionally absent from this demo.

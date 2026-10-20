@@ -1,0 +1,4 @@
+{"size": 500, "offset_cap": 20000, "records": 250000, "total_expected": 250000, "drain_complete_seconds": 127.75731258399999, "ingested": 250000, "correctness": true, "host_time_utc": "2026-10-20T03:06:30.680261+00:00"}
+{"size": 5000, "offset_cap": 20000, "records": 100000, "total_expected": 350000, "drain_complete_seconds": 57.60996558299999, "ingested": 350000, "correctness": true, "host_time_utc": "2026-10-20T03:07:28.291367+00:00"}
+{"size": 500, "offset_cap": 200000, "records": 250000, "total_expected": 600000, "drain_complete_seconds": 20.894997791999998, "ingested": 600000, "correctness": true, "host_time_utc": "2026-10-20T03:07:50.485910+00:00"}
+{"size": 5000, "offset_cap": 200000, "records": 100000, "total_expected": 700000, "drain_complete_seconds": 20.436022624999993, "ingested": 700000, "correctness": true, "host_time_utc": "2026-10-20T03:08:10.922393+00:00"}

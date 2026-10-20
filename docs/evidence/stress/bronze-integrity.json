@@ -1,0 +1,6 @@
+{
+  "rows": 700000,
+  "unique_coordinates": 700000,
+  "correctness": "passed",
+  "recorded_at_utc": "2026-10-20T03:19:04.793132+00:00"
+}
