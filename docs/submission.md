@@ -28,7 +28,8 @@ The following is a draft only; no email is sent by this repository or its script
 >
 > The presentation covers the architecture, assumptions, Spark sizing approach, correctness/recovery validation and measured performance findings, including the limitations of the local tests. I look forward to presenting and discussing the project in the next round.
 >
-> Best regards,  
+> Best regards,
+>
 > Fabricio Dutra
 
 Attach `acme-delivery-assessment.pdf` and, if useful, `acme-delivery-assessment.pptx`. A local source/evidence ZIP can be generated with the packaging command in the presentation guide. No credentials, personal preparation notes or large raw lake fixtures belong in the submission.
