@@ -22,14 +22,14 @@ def main():
         ), item["path"]
     pdf = fitz.open(OUT / "acme-delivery-assessment.pdf")
     ppt = Presentation(OUT / "acme-delivery-assessment.pptx")
-    assert len(pdf) == len(ppt.slides) == manifest["total_slides"] == 22
-    assert manifest["main_slides"] == 15
+    assert len(pdf) == len(ppt.slides) == manifest["total_slides"] == 10
+    assert manifest["main_slides"] == 10
     for i, (page, slide) in enumerate(zip(pdf, ppt.slides), 1):
         assert abs(page.rect.width - 960) < 1 and abs(page.rect.height - 540) < 1, i
         assert (
             page.get_text().strip() and slide.notes_slide.notes_text_frame.text.strip()
         ), i
-        assert f"{i:02d} / 22" in page.get_text(), i
+        assert f"{i:02d} / 10" in page.get_text(), i
         for shape in slide.shapes:
             assert shape.left >= 0 and shape.top >= 0, (i, "negative shape position")
             assert (
@@ -90,7 +90,7 @@ def main():
         )
     assert sum(b["input_events"] for b in batches) == 774001
     print(
-        "Validated 22 PDF/PPTX slides, notes, geometry, hashes, Python syntax, integrity counts and recomputed freshness/rate summaries."
+        "Validated 10 PDF/PPTX slides, notes, geometry, hashes, Python syntax, integrity counts and recomputed freshness/rate summaries."
     )
 
 

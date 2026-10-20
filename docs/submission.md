@@ -5,8 +5,8 @@ The recruiter requested a professional presentation and all underlying work/code
 | Requested item | Delivered artifact |
 |---|---|
 | Professional presentation | [PDF](presentation/acme-delivery-assessment.pdf) and [editable PowerPoint](presentation/acme-delivery-assessment.pptx) |
-| Methodology, assumptions and analytical approach | Main slides 2–10, [English speaker notes](presentation/slides.md), [architecture](architecture.md) and [measurement analysis](performance-stress.md) |
-| Findings and limitations | Main slides 11–14 and technical appendix; evidence-linked performance, freshness, correctness and recovery results |
+| Methodology, assumptions and analytical approach | Slides 2–6, [English speaker notes](presentation/slides.md), [architecture](architecture.md) and [measurement analysis](performance-stress.md) |
+| Findings and limitations | Slides 7–10; evidence-linked bulk performance, freshness, correctness/recovery results and next steps. Ten slides total, without an appendix |
 | Underlying implementation | [PySpark application](../app/), [SQL](../sql/), [Docker stack](../docker-compose.yaml), [tests](../tests/) |
 | Underlying experimental/analysis work | [Measurement harness](../scripts/stress/README.md), [recorded data](evidence/stress/), [slide/figure generator](../scripts/presentation/), [input/output hashes](presentation/manifest.json) |
 | Run/review instructions | [Root README](../README.md), [presentation guide](presentation/README.md), [evidence index](evidence/README.md) |
