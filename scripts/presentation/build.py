@@ -286,7 +286,7 @@ def charts(data):
     fig.subplots_adjust(left=0.09, right=0.98, top=0.91, bottom=0.2)
     median = [r["freshness"]["median_of_batch_p95_seconds"] for r in levels]
     maximum = [r["freshness"]["maximum_batch_p95_seconds"] for r in levels]
-    xs = range(4)
+    xs = [r["actual_events_per_second"] for r in levels]
     ax.plot(
         xs,
         median,

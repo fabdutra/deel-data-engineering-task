@@ -317,7 +317,7 @@
     },
     {
       "path": "scripts/presentation/build.py",
-      "sha256": "d1d11e63ff197da7476b5375a290153c7a3115ec647ebff8c3a500332db46630"
+      "sha256": "09ea74ad106b37435398c1ccb14bbc6e29977cc78c31ab9575b651c1ed0cfa05"
     },
     {
       "path": "scripts/presentation/deck.py",
@@ -399,11 +399,11 @@
   "outputs": [
     {
       "path": "docs/presentation/acme-delivery-assessment.pdf",
-      "sha256": "5f31b9b75445bda89a5e3ccaeabbe4a4185928edf934ff3d334ca8b36c508083"
+      "sha256": "0d4c4e158d1b169cc6c53fbd51e387b9554c7a32c4fd26354686df1999c0c0de"
     },
     {
       "path": "docs/presentation/acme-delivery-assessment.pptx",
-      "sha256": "b01321a2adfe26f1ad8c799654908e8dd2dde59aa0857f7c3e624d8e32b0180b"
+      "sha256": "ec28f276b47171e7b0414670ef3281c5e164d1443d12fe7e68df674440260c89"
     }
   ]
 }
