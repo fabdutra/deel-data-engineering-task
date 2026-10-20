@@ -2,8 +2,8 @@
   "title": "ACME Delivery: streaming operational analytics",
   "author": "Fabricio Dutra",
   "language": "en",
-  "main_slides": 15,
-  "total_slides": 22,
+  "main_slides": 10,
+  "total_slides": 10,
   "format": "16:9",
   "measurement_dates": "2026-10-19 to 2026-10-20; evidence timestamps UTC",
   "baseline_evidence_commit": "00b63a274df87feaf0991b2fc7e3674dadea852e",
@@ -19,170 +19,74 @@
     },
     {
       "number": 2,
-      "title": "Four questions drive the platform",
+      "title": "What was delivered",
       "sources": [
-        "sql/open-orders.sql",
+        "docs/assessment-deliverables.md",
         "sql/pending-items.sql"
       ]
     },
     {
       "number": 3,
-      "title": "Make the assumptions explicit",
-      "sources": [
-        "docs/assessment-deliverables.md",
-        "docs/architecture.md"
-      ]
-    },
-    {
-      "number": 4,
-      "title": "One complete source-to-query path",
+      "title": "How the components connect",
       "sources": [
         "docs/architecture.md",
         "docker-compose.yaml"
       ]
     },
     {
+      "number": 4,
+      "title": "How data becomes useful",
+      "sources": [
+        "app/gold.py",
+        "app/materialize.py"
+      ]
+    },
+    {
       "number": 5,
-      "title": "Two fact grains prevent double counting",
-      "sources": [
-        "app/gold.py",
-        "docs/architecture.md"
-      ]
-    },
-    {
-      "number": 6,
-      "title": "Every microbatch earns its publication",
-      "sources": [
-        "app/materialize.py",
-        "app/storage.py"
-      ]
-    },
-    {
-      "number": 7,
-      "title": "Historical joins are part of the stream",
-      "sources": [
-        "app/gold.py",
-        "docs/evidence/historical-join-tests.log"
-      ]
-    },
-    {
-      "number": 8,
-      "title": "Choose the simplest components that fit",
-      "sources": [
-        "docs/architecture.md",
-        "README.md"
-      ]
-    },
-    {
-      "number": 9,
-      "title": "Size for working sets and recovery",
+      "title": "The local Spark size and its limits",
       "sources": [
         "docs/performance.md",
         "docker-compose.yaml"
       ]
     },
     {
-      "number": 10,
-      "title": "Triangulate correctness and performance",
+      "number": 6,
+      "title": "Which performance metrics were measured",
       "sources": [
-        "tests/test_pipeline.py",
-        "docs/evidence/README.md"
+        "docs/performance-stress.md",
+        "docs/evidence/stress/streaming-levels.json"
       ]
     },
     {
-      "number": 11,
-      "title": "Gold dominates as retained state grows",
+      "number": 7,
+      "title": "Large loads: Gold takes most of the time",
       "sources": [
         "docs/evidence/stress/materialization.json",
         "docs/evidence/stress/scale-1m-spark-metrics.json"
       ]
     },
     {
-      "number": 12,
-      "title": "Freshness degrades without container failures",
+      "number": 8,
+      "title": "Streaming: more input means more delay",
       "sources": [
         "docs/evidence/stress/streaming-levels.json",
         "docs/evidence/stress/streaming-batches.json"
       ]
     },
     {
-      "number": 13,
-      "title": "Correctness survives a temporary broker outage",
+      "number": 9,
+      "title": "Correctness and recovery were checked",
       "sources": [
         "docs/evidence/stress/final-integrity.json",
         "docs/evidence/stress/broker-outage.jsonl"
       ]
     },
     {
-      "number": 14,
-      "title": "Scale the measured constraint first",
-      "sources": [
-        "docs/performance-stress.md",
-        "docs/performance.md"
-      ]
-    },
-    {
-      "number": 15,
-      "title": "Inspect, reproduce and discuss",
+      "number": 10,
+      "title": "Delivery summary and next step",
       "sources": [
         "README.md",
-        "docs/evidence/README.md"
-      ]
-    },
-    {
-      "number": 16,
-      "title": "Upserts and deletes preserve ordering",
-      "sources": [
-        "app/cdc.py",
-        "app/storage.py"
-      ]
-    },
-    {
-      "number": 17,
-      "title": "Publish a complete read boundary",
-      "sources": [
-        "app/materialize.py",
-        "app/metrics.py"
-      ]
-    },
-    {
-      "number": 18,
-      "title": "Intake and serving have different limits",
-      "sources": [
-        "docs/evidence/stress/bronze-load-levels.jsonl",
-        "docs/evidence/stress/query-concurrency.jsonl"
-      ]
-    },
-    {
-      "number": 19,
-      "title": "Native metrics support the sizing discussion",
-      "sources": [
-        "docs/evidence/stress/scale-1m-spark-metrics.json",
-        "docs/evidence/stress/online-spark-metrics.json"
-      ]
-    },
-    {
-      "number": 20,
-      "title": "Captured business output is inspectable",
-      "sources": [
-        "docs/evidence/stress/query-output.json",
-        "docs/evidence/stress/reconciliation.jsonl"
-      ]
-    },
-    {
-      "number": 21,
-      "title": "Limits are part of the analytical result",
-      "sources": [
-        "docs/performance-stress.md",
-        "docs/assessment-deliverables.md"
-      ]
-    },
-    {
-      "number": 22,
-      "title": "Every claim has a path back to the work",
-      "sources": [
-        "docs/assessment-deliverables.md",
-        "docs/evidence/README.md"
+        "docs/presentation/README.md"
       ]
     }
   ],
@@ -192,24 +96,12 @@
       "sha256": "d3091976f50ab7faf068853a5f8e5fab6b9059509c3fc350fbc87729ae7e2f17"
     },
     {
-      "path": "app/cdc.py",
-      "sha256": "b918bb2e424a70df3c0dd52a9640efa11430c53e1b2aa02572e04c980c3b60fa"
-    },
-    {
       "path": "app/gold.py",
       "sha256": "53e6919a785d29c88067321aa487219580b135573085e9c76cbd7028d164bf30"
     },
     {
       "path": "app/materialize.py",
       "sha256": "c5a5baff54b5b307ad1ca096c657d62f2fcfea28bf91ebe9b13009e89f94e55d"
-    },
-    {
-      "path": "app/metrics.py",
-      "sha256": "f2d448eb13da6571825e36c8f65bbf94e655d65cace6b840ae2c1b32db0d3dbf"
-    },
-    {
-      "path": "app/storage.py",
-      "sha256": "ac89a915fe5b45c13cad431a8a9be8e92630860bc2086497b476332614c93ff3"
     },
     {
       "path": "docker-compose.yaml",
@@ -222,14 +114,6 @@
     {
       "path": "docs/assessment-deliverables.md",
       "sha256": "73210435558bfa64385ae15c481fcbe9982557b1882ea7eafe0c65b3e4ba8473"
-    },
-    {
-      "path": "docs/evidence/README.md",
-      "sha256": "cc058dc6b1628542897fbbda9a1fd50e211f5f8b008642131f6ffbdc76d72512"
-    },
-    {
-      "path": "docs/evidence/historical-join-tests.log",
-      "sha256": "b7a01d82ce24cdf1593ecb215dd46f43fd8b83e866e43fe4c6065384e27e7205"
     },
     {
       "path": "docs/evidence/stress/aggregate-integrity.jsonl",
@@ -316,12 +200,16 @@
       "sha256": "a5f8fb4f497c0ae5164dea827a901c8585ab84063e8028789fe7bce027809d60"
     },
     {
+      "path": "docs/presentation/README.md",
+      "sha256": "534003408b12c88b0b17c18fb81b9b16a5cdedc42527a3f1d0478b089522075f"
+    },
+    {
       "path": "scripts/presentation/build.py",
-      "sha256": "09ea74ad106b37435398c1ccb14bbc6e29977cc78c31ab9575b651c1ed0cfa05"
+      "sha256": "ebe1686749f5b69c15d5d2392a0422751cffcafb1695ce8592dc4cb1aeb49c09"
     },
     {
       "path": "scripts/presentation/deck.py",
-      "sha256": "80d1bbd34fe8868a6dfc58678cdf1e4cb104a57b111aeb261a5dd787e06a6386"
+      "sha256": "64dae03481168771d7d2c58b6ff287a5f16d322ad296dee293d33e18b02a02bd"
     },
     {
       "path": "scripts/presentation/package_submission.py",
@@ -333,7 +221,7 @@
     },
     {
       "path": "scripts/presentation/validate.py",
-      "sha256": "76352acf48430dadd998b754647e778b959d14913f79cbd74a632a3c4592c441"
+      "sha256": "c0224e165df90cf3f5088965ba2908e0f65cf1d7f86927ef7aa33471fecc9e31"
     },
     {
       "path": "scripts/stress/README.md",
@@ -384,26 +272,18 @@
       "sha256": "747f5530998d22cd4d91c3a9d7e9012fce06ba6237d44cd7ac22f629b15f79b8"
     },
     {
-      "path": "sql/open-orders.sql",
-      "sha256": "3d6dbada4e12505015d9ea264b284cff5c255cbb533df7fafc4e79492c357054"
-    },
-    {
       "path": "sql/pending-items.sql",
       "sha256": "7d971ca98353c556b4994620a479e76721df9921e0d188fac499e6513b06d9b9"
-    },
-    {
-      "path": "tests/test_pipeline.py",
-      "sha256": "bd64747c4f5a2b7e96e6745e67695e7e60e464326a6d29fc0b0ac2145331b945"
     }
   ],
   "outputs": [
     {
       "path": "docs/presentation/acme-delivery-assessment.pdf",
-      "sha256": "0d4c4e158d1b169cc6c53fbd51e387b9554c7a32c4fd26354686df1999c0c0de"
+      "sha256": "352e5942d15587c13338fda46d3843c5f409d7787b4780498b8a98fb842942e4"
     },
     {
       "path": "docs/presentation/acme-delivery-assessment.pptx",
-      "sha256": "ec28f276b47171e7b0414670ef3281c5e164d1443d12fe7e68df674440260c89"
+      "sha256": "d97e701d26477ca78762f89da98ac21a5d62401de5416df1ff3557ed99929c5c"
     }
   ]
 }

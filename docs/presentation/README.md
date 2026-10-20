@@ -1,6 +1,6 @@
 # ACME Delivery assessment presentation
 
-Professional presentation for the Deel Senior Data Engineer assessment and follow-up discussion. Author: Fabricio Dutra. Language: English. Format: 16:9, **15 main slides plus 7 technical appendix slides**, approximately 18–20 minutes for the main narrative.
+Professional presentation for the Deel Senior Data Engineer assessment and follow-up discussion. Author: Fabricio Dutra. Language: English. Format: 16:9, **10 slides total, without an appendix**, approximately 10–12 minutes. The narrative uses simple language and focuses on architecture, deliverables and performance metrics/results. Technical details remain in speaker notes and repository documentation.
 
 ## Submission files
 
@@ -14,11 +14,11 @@ The private repository contains all underlying application code, SQL, Docker con
 
 ## Methodology and findings
 
-The narrative moves from the four operational questions to explicit assumptions, architecture, historical enrichment, dimensional grains, ordering/deletion semantics, the publication contract, local resource budgets and independent validation. It distinguishes measured facts from proposed production changes.
+The ten slides cover the goal, deliverables, component architecture, data processing, Spark sizing, performance-metric definitions, bulk results, streaming results, correctness/recovery and handover. Measured facts are distinguished from proposed production changes.
 
 Charts read the retained [materialization](../evidence/stress/materialization.json) and [stepped CDC measurements](../evidence/stress/streaming-levels.json). The presentation separates bulk execution rate, source arrival rate, streaming batch duration, source-to-publication age and CLI cold start. Batch p95 summaries are not presented as global event p95. The nominal 6k/s source target was not attained; the actual highest step was approximately 2.59k/s. No certified production SLA or fixed production executor count is claimed.
 
-The data-results appendix contains selected rows from [actual query output](../evidence/stress/query-output.json), with its publication timestamp. It is a formatted presentation of captured data, not a Spark UI screenshot. The full results and independent PostgreSQL reconciliations remain available in the evidence directory.
+The full [actual query output](../evidence/stress/query-output.json), publication timestamp and independent PostgreSQL comparisons remain linked in the repository; they are not additional slides. The ten-slide presentation contains no Spark UI screenshots.
 
 ## Rebuild without Docker or live credentials
 
@@ -43,7 +43,7 @@ The ZIP is written to ignored `artifacts/deel-assessment-submission.zip`. It inc
 
 ## Suggested live walkthrough
 
-1. Present the 15 main slides, using the appendix for questions.
+1. Present the ten slides; use speaker notes and linked documentation for technical questions.
 2. Open the root README, show the reviewer index and recorded CLI/query output.
 3. If demonstrating live, follow the root run instructions, wait for a successful publication, then query all four metrics and point out the publication timestamp.
 4. Use evidence to discuss the observed constraints rather than rerunning large workloads during the interview.

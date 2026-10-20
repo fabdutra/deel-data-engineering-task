@@ -252,14 +252,14 @@ def charts(data):
     gold = [r["phases"][0]["gold_seconds"] for r in uniform]
     other = [r["initial_seconds"] - a - b for r, a, b in zip(uniform, silver, gold)]
     xs = range(3)
-    ax.bar(xs, silver, color="#8BBCAF", label="Silver MERGEs", width=0.52)
-    ax.bar(xs, gold, bottom=silver, color="#007F78", label="Gold refresh", width=0.52)
+    ax.bar(xs, silver, color="#8BBCAF", label="Silver updates", width=0.52)
+    ax.bar(xs, gold, bottom=silver, color="#007F78", label="Gold tables", width=0.52)
     ax.bar(
         xs,
         other,
         bottom=[a + b for a, b in zip(silver, gold)],
         color="#CBD6DE",
-        label="Validation / publication / other",
+        label="Validation / other work",
         width=0.52,
     )
     for x, r in zip(xs, uniform):
@@ -273,7 +273,7 @@ def charts(data):
             fontsize=12,
         )
     ax.set_xticks(list(xs), ["0.6m events", "3.0m events", "6.0m events"])
-    ax.set_ylabel("Initial materialization seconds")
+    ax.set_ylabel("Initial processing time (seconds)")
     ax.set_ylim(0, 420)
     ax.grid(axis="y", alpha=0.15)
     ax.set_axisbelow(True)
@@ -293,7 +293,7 @@ def charts(data):
         "o-",
         color="#007F78",
         linewidth=2.8,
-        label="Median of within-batch p95 ages",
+        label="Batch p95: median",
     )
     ax.plot(
         xs,
@@ -301,16 +301,16 @@ def charts(data):
         "o--",
         color="#D49C3D",
         linewidth=2,
-        label="Largest within-batch p95 age",
+        label="Batch p95: highest",
     )
     ax.axhline(
-        30, color="#AD4D3D", ls=":", linewidth=1.7, label="30s experimental reference"
+        30, color="#AD4D3D", ls=":", linewidth=1.7, label="30s test reference"
     )
     for x, m in zip(xs, maximum):
         ax.text(x, m + 4, f"{m:.1f}s", ha="center", color="#183342", fontsize=10)
     ax.set_xticks(list(xs), [f"{r['actual_events_per_second']:,.0f}" for r in levels])
     ax.set_xlabel("Actual source events / second")
-    ax.set_ylabel("Source-to-publication age, seconds")
+    ax.set_ylabel("Time until published (seconds)")
     ax.set_ylim(0, 140)
     ax.legend(loc="upper left", frameon=False, fontsize=9)
     ax.grid(axis="y", alpha=0.15)
@@ -515,7 +515,7 @@ def main():
         "title": "ACME Delivery: streaming operational analytics",
         "author": "Fabricio Dutra",
         "language": "en",
-        "main_slides": 15,
+        "main_slides": len(slides),
         "total_slides": len(slides),
         "format": "16:9",
         "measurement_dates": "2026-10-19 to 2026-10-20; evidence timestamps UTC",
