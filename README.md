@@ -8,8 +8,11 @@ This repository preserves the complete history of [Deel's starter repository](ht
 
 Start with the [assessment requirements mapped to the implementation](docs/assessment-deliverables.md). The table below links each deliverable to its documentation, implementation or recorded execution evidence.
 
+For the interview, open the [presentation PDF](docs/presentation/acme-delivery-assessment.pdf) or [editable PowerPoint](docs/presentation/acme-delivery-assessment.pptx). The [submission package guide](docs/submission.md) maps the recruiter's presentation/code requirements to the delivered files.
+
 | Deliverable / review topic | Where to look | What to inspect |
 |---|---|---|
+| Professional presentation and underlying work | [PDF](docs/presentation/acme-delivery-assessment.pdf), [PowerPoint](docs/presentation/acme-delivery-assessment.pptx), [presentation source / notes](docs/presentation/README.md), [experiment code](scripts/stress/README.md) | Methodology, assumptions, findings, limitations, reproducible figures and code/evidence references |
 | Run the Dockerized solution | [Run instructions](#run), [Compose stack](docker-compose.yaml) | Setup, startup, container dependencies and commands to query the metrics |
 | Spark Structured Streaming and historical-data joins | [Historical-data join contract](docs/architecture.md#joining-cdc-with-historical-data), [pipeline](app/pipeline.py), [Gold processing](app/gold.py) | Debezium snapshot + CDC, accumulated Silver state and joins with records absent from the current batch |
 | Consistent dimensional output | [Architecture and data model](docs/architecture.md), [business definitions](#business-definitions-and-data-model) | Fact/dimension grains, Delta tables, status propagation and publication consistency |

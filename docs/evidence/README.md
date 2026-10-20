@@ -19,6 +19,8 @@ These are actual local executions on ARM64 with Spark 3.5.8, Delta 3.3.2 and the
 
 The [stress report](../performance-stress.md) explains the later campaign, measurement methods and limits. It supplements the initial evidence below: the six-million-event fixture took **370.5 s** with **846 MB task disk spill**; short load steps above approximately **2,000 actual events/s** accumulated backlog. This supports a measured bottleneck discussion, not an absolute production-capacity or freshness guarantee. The shared stress exports total approximately 120 KB; personal notes and large raw logs remain excluded.
 
+The [measurement harness](../../scripts/stress/README.md) supplies the underlying experimental work, and the [professional presentation](../presentation/README.md) includes reproducible evidence charts, methodology, assumptions and findings. Input/output hashes are retained in its manifest.
+
 The PDF lists data/Spark UI screenshots as examples of execution evidence. This submission currently supplies actual CLI output, logs, query results, reconciliations and native metric extracts; **no Spark UI screenshots are included**. These are captured executions, not simulated screenshots. The optional History Server and live UI are documented in the root README for further inspection.
 
 The synthetic benchmark wrote Bronze in **1.567 s**, materialized **600,200 events in 43.764 s** (about **13,714 unique input events/s** for that job), and applied **10,000 order updates in 13.111 s**. Those updates also refresh their 50,000 associated item facts. This was an isolated materialization workload, not Kafka ingestion throughput, and its target tables are smaller than a production lake.

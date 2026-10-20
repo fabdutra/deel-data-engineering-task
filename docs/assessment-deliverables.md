@@ -2,6 +2,8 @@
 
 This is the reviewer's entry point for the implementation, its evidence and its explicit limits. The architecture, sizing and metrics documents are versioned in this repository; the candidate's personal notes under `context/` are excluded.
 
+The recruiter's additional presentation requirement is covered by the [PDF](presentation/acme-delivery-assessment.pdf), [editable PowerPoint](presentation/acme-delivery-assessment.pptx) and [submission package guide](submission.md). The underlying [experiment code](../scripts/stress/README.md), [presentation/figure source](../scripts/presentation/) and recorded evidence accompany the application implementation.
+
 ## Requirements mapped to the implementation
 
 | Assessment requirement | Implementation | Evidence / reference |
